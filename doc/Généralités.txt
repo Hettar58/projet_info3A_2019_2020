@@ -1,0 +1,22 @@
+Tous les points sont contenus dans un tableau / ArrayList référencé dans le main ou dans le graphe.
+
+Les classes Graphe / djikstra / Render / PointGenerator ne peuvent être instanciées qu'une seule fois.
+
+La classe point contient les attributs suivants:
+    - int x //pos X
+    - int y //pos Y
+
+La classe Arc contient les attributs suivants:
+    - Point p1
+    - Point p2
+    - int distance
+
+La classe Graphe contient les attributs suivants:
+    - Point origine{0, 0}
+    - Point arrivée{dx, dy}
+    - double dx //hauteur
+    - double dy//largeur
+    - ArrayList / Point[]
+
+
+La classe Render ne contient pas d'attributs particuliers

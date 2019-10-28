@@ -1,0 +1,18 @@
+Classes nécessaires au bon fonctionnement du projet.
+
+Modélisation du graphe:
+    - classe Graphe
+    - classe Point
+    - classe Arc
+    - classe obstacle
+
+Calcul
+    - classe Djikstra
+    - classe PointGenerator
+
+Rendu
+    - classe Render
+
+Utilitaire
+    - classe Main
+    - classe Util
