@@ -12,18 +12,18 @@ import java.awt.Graphics;
  * @author yt646712
  */
 public class Rectangle extends Obstacle{
-    Point HG;
-    Point BD;
+    private Point ext1;
+    private Point ext2;
     
     public Rectangle(Point HG, Point BD){
-        this.HG = HG;
-        this.BD = BD;
+        this.ext1 = HG;
+        this.ext2 = BD;
     }
     
     @Override
     public boolean collision(Point p){
-        if (HG.getX() > p.getX() && BD.getX() < p.getX()){
-            if (HG.getY() < p.getY() && BD.getY() > p.getY()){
+        if (ext1.getX() > p.getX() && ext2.getX() < p.getX()){
+            if (ext1.getY() < p.getY() && ext2.getY() > p.getY()){
                 return true;
             }
             else{
@@ -37,6 +37,17 @@ public class Rectangle extends Obstacle{
     
     @Override
     public void afficher(Graphics g){
-        g.fillRect(HG.getX(), HG.getY(), BD.getX() - HG.getX(), BD.getY() - HG.getY());
+        if (ext1.getX() < ext2.getX() && ext1.getY() < ext2.getY()){
+            g.fillRect(ext1.getX(), ext1.getY(), ext2.getX() - ext1.getX(), ext2.getY() - ext1.getY());
+        }
+        else if(ext1.getX() > ext2.getX() && ext1.getY() > ext2.getY()){
+            g.fillRect(ext2.getX(), ext2.getY(), ext1.getX() - ext2.getX(), ext1.getY() - ext1.getY());
+        }
+        else if(ext1.getX() > ext2.getX() && ext1.getY() < ext2.getY()){
+            g.fillRect(ext2.getX(), ext1.getY(), ext1.getX() - ext2.getX(), ext2.getY() - ext1.getY());
+        }
+        else if (ext1.getX() < ext1.getX() && ext1.getY() > ext2.getY()){
+            g.fillRect(ext1.getX(), ext2.getY(), ext2.getX() - ext1.getX(), ext1.getY() - ext2.getY());
+        }
     }
 }

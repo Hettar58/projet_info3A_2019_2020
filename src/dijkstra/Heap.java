@@ -11,8 +11,8 @@ package dijkstra;
  */
 public class Heap {
     Node[] tab;
-    int capacity;
-    int size;
+    int capacity;   //capacité maximum
+    int size;       //remplissage actuel
     
     public Heap(int capacity){
         this.capacity = capacity;
@@ -60,10 +60,11 @@ public class Heap {
         tab[index_n1] = temp;
     }
     
-    // A MODIFIER
     public Object extractRoot(){
         Object output = tab[0].getValue();
-        tab[0] = tab[capacity - 1];
+        
+        //première valeur différente de null à la fin du tableau.
+        tab[0] = tab[size - 1];
         downHeap(0);
         return output;
     }
@@ -77,16 +78,27 @@ public class Heap {
                 tab[capacity - 1 - i] = n;
                 inserted = true;
                 i = capacity - 1 - i;
+                size++;
             }
             else if(tab[i] == null){
                 tab[i] = n;
                 inserted = true;
+                size++;
             }
         }
+        upHeap(i);
     }
     
     public void clear(){
         
+    }
+    
+    public int getSize(){
+        return size;
+    }
+    
+    public Object getObjectAt(int index){
+        return tab[index].getValue();
     }
     
     private class Node{

@@ -19,7 +19,7 @@ public class RenderPanel extends JPanel{
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
-        obstacles = new ArrayList<Obstacle>();
+        obstacles = Dijkstra.obstacles;
         points = new ArrayList<Point>();
     }
     public void draw(Graphics g){

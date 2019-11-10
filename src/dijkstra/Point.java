@@ -12,9 +12,9 @@ import java.awt.Graphics;
  * @author yt646712
  */
 public class Point {
-    int x;
-    int y;
-    int distance;
+    private int x;
+    private int y;
+    private int distance;
     //boolean out;
 
     public Point(int x, int y) {
