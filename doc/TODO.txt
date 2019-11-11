@@ -1,0 +1,8 @@
+
+Implémenter dijkstra
+Implémenter le 2DTree (KD Tree)
+Implémenter le raffinement itératif
+Remplacer l'ArrayList de points par le Heap
+
+Compte rendu a faire
+Complexité algo sur papier log-log a faire

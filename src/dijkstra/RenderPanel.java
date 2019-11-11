@@ -20,7 +20,7 @@ public class RenderPanel extends JPanel{
     public RenderPanel(){
         //appels de new a sortir du constructeur
         obstacles = Dijkstra.obstacles;
-        points = new ArrayList<Point>();
+        points = Dijkstra.graphe;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);

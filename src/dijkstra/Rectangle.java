@@ -22,13 +22,8 @@ public class Rectangle extends Obstacle{
     
     @Override
     public boolean collision(Point p){
-        if (ext1.getX() > p.getX() && ext2.getX() < p.getX()){
-            if (ext1.getY() < p.getY() && ext2.getY() > p.getY()){
-                return true;
-            }
-            else{
-                return false;
-            }
+        if (ext1.getX() < p.getX() && ext2.getX() > p.getX() && ext1.getY() < p.getY() && ext2.getY() > p.getY()){
+            return true;
         }
         else{
             return false;
@@ -37,7 +32,7 @@ public class Rectangle extends Obstacle{
     
     @Override
     public void afficher(Graphics g){
-        if (ext1.getX() < ext2.getX() && ext1.getY() < ext2.getY()){
+        /*if (ext1.getX() < ext2.getX() && ext1.getY() < ext2.getY()){
             g.fillRect(ext1.getX(), ext1.getY(), ext2.getX() - ext1.getX(), ext2.getY() - ext1.getY());
         }
         else if(ext1.getX() > ext2.getX() && ext1.getY() > ext2.getY()){
@@ -48,6 +43,7 @@ public class Rectangle extends Obstacle{
         }
         else if (ext1.getX() < ext1.getX() && ext1.getY() > ext2.getY()){
             g.fillRect(ext1.getX(), ext2.getY(), ext2.getX() - ext1.getX(), ext1.getY() - ext2.getY());
-        }
+        }*/
+        g.fillRect(ext1.getX(), ext1.getY(), ext2.getX() - ext1.getX(), ext2.getY() - ext1.getY());
     }
 }

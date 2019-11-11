@@ -15,17 +15,19 @@ import javax.swing.JFrame;
  */
 public class Dijkstra extends JFrame{
     
-    public static final int MAX_RAYON = 20;
+    public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
-    public static final int MAX_POINTS = 10;
+    public static final int MAX_POINTS = 5000;
     public static final int MAX_OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
+    public static final int MARGIN = 20;
     
     public static ArrayList<Obstacle> obstacles;
-    
+    public static ArrayList<Point> graphe;
+    //public static Heap graphe;
     RenderPanel UI;
-    Heap graphe;
+
     
     public Dijkstra(){
         this.setTitle("Dijkstra");
@@ -34,22 +36,19 @@ public class Dijkstra extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
         
-        graphe = new Heap(MAX_POINTS);
-        
+        //graphe = new Heap(MAX_POINTS);
+        graphe = new ArrayList<Point>();
         obstacles = new ArrayList<Obstacle>();
         generateObstacles();
         
         for (int i = 0; i < MAX_POINTS; i++){
             Point p = generatePoint(true);
-            System.out.println(p.getX() + " " + p.getY());
-            graphe.addObject(p, i);
+            //graphe.addObject(p, i);
+            graphe.add(p);
         }
         
         UI = new RenderPanel();
-        
-        
         this.add(UI);
-        
     }
     
     public void generateObstacles(){
@@ -63,7 +62,13 @@ public class Dijkstra extends JFrame{
             }
             else{   //rectangle
                 Point ex1  = generatePoint(false);
-                Point ex2 = generatePoint(false);
+                Point ex2 = null;
+                
+                //pour faciliter les calculs. implique que ext1 = HG et ext2 = BD
+                do{
+                    ex2 = generatePoint(false);
+                }while (ex2.getX() <= ex1.getX() || ex2.getY() <= ex1.getY());
+                
                 Rectangle r = new Rectangle(ex1, ex2);
                 obstacles.add(r);
             }
@@ -81,15 +86,15 @@ public class Dijkstra extends JFrame{
             Point p = null;
             do{
                 collide = false;
-                int x = (int)(1+(WIDTH - 1) * Math.random());
-                int y = (int)(1+(HEIGHT -1) * Math.random());
+                p = null;
+                int x = (int)(1+(WIDTH - MARGIN) * Math.random());
+                int y = (int)(1+(HEIGHT - MARGIN) * Math.random());
                 p = new Point(x, y);
-                for (int i = 0; i < MAX_OBSTACLES / 2; i++){
-                    if (obstacles.get(i).collision(p) == true || obstacles.get(MAX_OBSTACLES - 1 - i).collision(p) == true){
+                for (int i = 0; i < obstacles.size(); i++){
+                    if (obstacles.get(i).collision(p) == true){
                         collide = true;
                     }
                 }
-                System.out.println(collide);
             }while (collide == true);
             return p;
         }
