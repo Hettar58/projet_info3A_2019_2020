@@ -33,7 +33,7 @@ public class Heap {
     }
     
     private void downHeap(int index){
-        if (2 * index < capacity){
+        if (2 * index < size){
             if (filsGauche(index) < tab[index].getKey()){
                 swap(index, 2 * index);
                 downHeap(2 * index);
@@ -46,10 +46,11 @@ public class Heap {
     }
     
     private void upHeap(int index){
-        if (index / 2 > 1){
+        if (index / 2 != 0){
             if (pere(index) > tab[index].getKey()){
                 swap(index, index / 2);
                 upHeap(index / 2);
+                System.out.println("upHeap");
             }
         }
     }
@@ -71,7 +72,9 @@ public class Heap {
     
     public void addObject(Object obj, int key){
         Node n = new Node(key, obj);
-        boolean inserted = false;
+        size++;
+        int i = size;
+        /*boolean inserted = false;
         int i = 0;
         while(inserted == false && i < capacity / 2){
             if (tab[capacity - 1 - i] == null){
@@ -85,7 +88,7 @@ public class Heap {
                 inserted = true;
                 size++;
             }
-        }
+        }*/
         upHeap(i);
     }
     
@@ -97,8 +100,12 @@ public class Heap {
         return size;
     }
     
-    public Object getObjectAt(int index){
-        return tab[index].getValue();
+    public String toString(){
+        String s = "";
+        for (int i = 0; i < size - 1; i++){
+            s += tab[i].toString() + "\n";
+        }
+        return s;
     }
     
     private class Node{
@@ -124,6 +131,10 @@ public class Heap {
 
         public void setValue(Object value) {
             this.value = value;
+        }
+        
+        public String toString(){
+            return ""+key +" | " + value;
         }
     }
 }

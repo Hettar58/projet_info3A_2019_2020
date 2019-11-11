@@ -14,9 +14,10 @@ import javax.swing.JFrame;
  * @author yt646712
  */
 public class Dijkstra extends JFrame{
+    
     public static final int MAX_RAYON = 20;
     public static final int MIN_RAYON = 9;
-    public static final int MAX_POINTS = 5000;
+    public static final int MAX_POINTS = 10;
     public static final int MAX_OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
@@ -33,11 +34,19 @@ public class Dijkstra extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
         
+        graphe = new Heap(MAX_POINTS);
+        
         obstacles = new ArrayList<Obstacle>();
         generateObstacles();
         
+        for (int i = 0; i < MAX_POINTS; i++){
+            Point p = generatePoint(true);
+            System.out.println(p.getX() + " " + p.getY());
+            graphe.addObject(p, i);
+        }
+        
         UI = new RenderPanel();
-        graphe = new Heap(MAX_POINTS);
+        
         
         this.add(UI);
         
@@ -46,7 +55,6 @@ public class Dijkstra extends JFrame{
     public void generateObstacles(){
         for (int i = 0; i < MAX_OBSTACLES; i++){
             int type = (int)(2*Math.random());
-            System.out.println(type);
             if (type == 0){ //disque
                 int r = (int)(MIN_RAYON + (MAX_RAYON - MIN_RAYON) * Math.random());
                 Point c = generatePoint(false);
@@ -65,12 +73,25 @@ public class Dijkstra extends JFrame{
         if (colCheck == false){
             int x = (int)(1+(WIDTH - 1) * Math.random());
             int y = (int)(1+(HEIGHT -1) * Math.random());
-            System.out.println(x + " " + y);
             Point p = new Point(x, y);
             return p;
         }
         else{
-            return null;
+            boolean collide = false;
+            Point p = null;
+            do{
+                collide = false;
+                int x = (int)(1+(WIDTH - 1) * Math.random());
+                int y = (int)(1+(HEIGHT -1) * Math.random());
+                p = new Point(x, y);
+                for (int i = 0; i < MAX_OBSTACLES / 2; i++){
+                    if (obstacles.get(i).collision(p) == true || obstacles.get(MAX_OBSTACLES - 1 - i).collision(p) == true){
+                        collide = true;
+                    }
+                }
+                System.out.println(collide);
+            }while (collide == true);
+            return p;
         }
     }
     /**
