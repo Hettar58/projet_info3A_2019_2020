@@ -4,5 +4,8 @@ Implémenter le 2DTree (KD Tree)
 Implémenter le raffinement itératif
 Remplacer l'ArrayList de points par le Heap
 
++ éventuellement changer la couleur du dessin pour repérer le début et l'arrivée.
+
+
 Compte rendu a faire
 Complexité algo sur papier log-log a faire

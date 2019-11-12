@@ -14,7 +14,7 @@ import java.awt.Graphics;
 public class Point {
     private int x;
     private int y;
-    private int distance;
+    private double distance;
     //boolean out;
 
     public Point(int x, int y) {
@@ -39,11 +39,11 @@ public class Point {
         this.y = y;
     }
 
-    public int getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
     

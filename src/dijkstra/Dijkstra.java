@@ -17,14 +17,19 @@ public class Dijkstra extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
-    public static final int MAX_POINTS = 5000;
-    public static final int MAX_OBSTACLES = 10;
+    public static final int MAX_POINTS = 250;
+    public static final int MAX_OBSTACLES = 0;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
+    public static final int INFINI = 9999;
+    public static final int R_THRESOLD = 10;
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Point> graphe;
+    public static ArrayList<Point> PCC;
+    Point origine;
+    Point arrivee;
     //public static Heap graphe;
     RenderPanel UI;
 
@@ -36,19 +41,58 @@ public class Dijkstra extends JFrame{
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
         
+        init();
+        Point s1 = null;
+        do{
+            s1 = find_min(graphe, origine);
+            PCC.add(s1);
+            graphe.remove(s1);
+            /*for (Point p : graphe){
+                maj_distances(s1, p);
+            }*/
+        }while(s1 != arrivee);
+        System.out.println("Ended Processing" +  graphe.size());
+    }
+    
+    public void init(){
         //graphe = new Heap(MAX_POINTS);
         graphe = new ArrayList<Point>();
+        PCC = new ArrayList<Point>();
         obstacles = new ArrayList<Obstacle>();
         generateObstacles();
         
-        for (int i = 0; i < MAX_POINTS; i++){
+        origine = new Point(5, 5);
+        origine.setDistance(0);
+        graphe.add(origine);
+        for (int i = 0; i < MAX_POINTS - 2; i++){
             Point p = generatePoint(true);
+            p.setDistance(Point.calcDistance(p, origine));
             //graphe.addObject(p, i);
             graphe.add(p);
         }
+        arrivee = new Point (800, 600);
+        graphe.add(arrivee);
         
         UI = new RenderPanel();
         this.add(UI);
+    }
+    
+    public Point find_min(ArrayList<Point> Q, Point origine){
+        double mini = INFINI;
+        Point sommet = origine;
+        for (Point p : Q){
+            if (Point.calcDistance(sommet, p) <= mini){
+                sommet = p;
+                mini = p.getDistance();
+            }
+        }
+        return sommet;
+    }
+    
+    public void maj_distances(Point p1, Point p2){
+        if (p2.getDistance() > p1.getDistance() + Point.calcDistance(p1, p2)){
+            p2.setDistance(p1.getDistance() + Point.calcDistance(p1, p2));
+        }
     }
     
     public void generateObstacles(){

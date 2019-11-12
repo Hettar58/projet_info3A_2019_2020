@@ -16,11 +16,13 @@ import javax.swing.*;
 public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
     ArrayList<Point> points;                 //a voir avec le HEAP
+    ArrayList<Point> PCC;
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
         obstacles = Dijkstra.obstacles;
         points = Dijkstra.graphe;
+        PCC = Dijkstra.PCC;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -31,6 +33,11 @@ public class RenderPanel extends JPanel{
         g.setColor(Color.RED);
         for (Point p : points){
             p.afficher(g);
+        }
+        
+        g.setColor(Color.GREEN);
+        for (Point p : PCC){
+            g.fillOval(p.getX(), p.getY(), 8, 8);
         }
     }
     
