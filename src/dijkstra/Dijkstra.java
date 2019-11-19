@@ -17,20 +17,20 @@ public class Dijkstra extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
-    public static final int POINTS = 50;
-    public static final int OBSTACLES = 0;
+    public static final int POINTS = 15000;
+    public static final int OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static final int R = 350;        //rayon pour prendre en compte un point dans les calculs
+    public static final int R = 75;        //rayon pour prendre en compte un point dans les calculs
     public static final int R_VISION = 50;  //rayon pour la génération des points en mode itératif
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Point> graphe;
     public static ArrayList<Point> PCC;
-    Point origine;
-    Point arrivee;
+    public static Point origine;
+    public static Point arrivee;
     //public static Heap graphe;
     RenderPanel UI;
 
@@ -44,27 +44,55 @@ public class Dijkstra extends JFrame{
         
         init();
         Point s1 = origine;
+        PCC.add(origine);
         do{
             s1 = find_min(graphe, s1);
-            //double d = PCC.get(PCC.size() -1).getDistance() + Point.calcDistance(s1, PCC.get(PCC.size() -1));
-            if (s1 != null){
-                PCC.add(s1);
-                graphe.remove(s1);
-                for (Point p : graphe){
-                    p.setDistance(Point.calcDistance(s1, p));
+            
+           if (s1 != null){
+                /*if (PCC.size() > 3){
+                    Point p1 = PCC.get(PCC.size() - 2);
+                    Point p2 = PCC.get(PCC.size() - 1);
+                    double d = Point.calcDistance(p1, p2) + Point.calcDistance(p2, s1);
+                    if (d > s1.getDistance() && Point.calcDistance(p1, s1) <= R){
+                        graphe.remove(s1);
+                        PCC.remove(p2);
+                        PCC.add(s1);
+                        for (Point p : graphe){
+                            p.setDistance(Point.calcDistance(s1, p));
+                        }
+                        System.out.println(s1.toString());
+                    }
+                    else{
+                        graphe.remove(s1);
+                        PCC.add(s1);
+                        for (Point p : graphe){
+                            p.setDistance(Point.calcDistance(s1, p));
+                        }
+                        System.out.println(s1.toString());
+                    }
+                    System.out.println(p1.toString());
+                    System.out.println(p2.toString());
+                    System.out.println(d);
                 }
-                System.out.println(s1.toString());
+                else{*/
+                    PCC.add(s1);
+                    graphe.remove(s1);
+                    for (Point p : graphe){
+                        p.setDistance(Point.calcDistance(s1, p));
+                    }
+                    System.out.println(s1.toString());
+                //}
             }
 
         }while(s1 != arrivee && s1 != null);
         
-        graphe.clear();
+        /*graphe.clear();
         graphe = PCC;
         
         for (int i = 0; i < POINTS - graphe.size(); i++){
             graphe.add(generatePoint(3));
             System.out.println("regen des points");
-        }
+        }*/
     }
     
     public void init(){
@@ -74,31 +102,45 @@ public class Dijkstra extends JFrame{
         obstacles = new ArrayList<Obstacle>();
         generateObstacles();
         
-        /*origine = new Point(5, 5);
+        origine = new Point(5, 5);
         graphe.add(origine);
-        for (int i = 0; i < MAX_POINTS - 2; i++){
-            Point p = generatePoint(true);
+        for (int i = 0; i < POINTS - 2; i++){
+            Point p = generatePoint(1);
             p.setDistance(Point.calcDistance(p, origine));
             //graphe.addObject(p, i);
             graphe.add(p);
-        }*/
-        generateStaticPoints();
+        }
+        //generateStaticPoints();
         
-        //arrivee = graphe.get(MAX_POINTS - 1);
-        //arrivee = new Point(800, 600);
-        //graphe.add(arrivee);
+//        arrivee = graphe.get(POINTS - 1);
+        arrivee = new Point(800, 600);
+        arrivee.setDistance(Point.calcDistance(origine, arrivee));
+        graphe.add(arrivee);
         UI = new RenderPanel();
         this.add(UI);
     }
     
-    public Point find_min(ArrayList<Point> Q, Point origine){
-        double mini = R;
+    public Point find_min(ArrayList<Point> Q, Point centre){
+        /*double mini = R;
         Point output = null;
         for (Point p : Q){
             double distance = Point.calcDistance(origine, p);
             if (distance < mini){
                 output = p;
                 mini = p.getDistance();
+            }
+        }*/
+        
+        double mini = 0;
+        double max = R;
+        double mini_ar = INFINI;
+        Point output = null;
+        for (Point p : Q){
+            double d_origine = Point.calcDistance(centre, p);
+            double d = Point.calcDistance(arrivee, p);
+            if (d <= mini_ar && d_origine <= R){
+                mini_ar = d;
+                output = p;
             }
         }
         return output;
@@ -132,7 +174,7 @@ public class Dijkstra extends JFrame{
     //mode == 1:    vérification de collision
     //mode == 2:    vérification de collision ET inclusion dans le rayon.
     public Point generatePoint(int mode){
-        if (mode == 1){
+        if (mode == 0){
             int x = (int)(1+(WIDTH - 1) * Math.random());
             int y = (int)(1+(HEIGHT -1) * Math.random());
             Point p = new Point(x, y);

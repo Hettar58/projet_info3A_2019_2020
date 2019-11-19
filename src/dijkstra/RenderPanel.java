@@ -17,12 +17,16 @@ public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
     ArrayList<Point> points;                 //a voir avec le HEAP
     ArrayList<Point> PCC;
+    Point origine;
+    Point arrivee;
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
         obstacles = Dijkstra.obstacles;
         points = Dijkstra.graphe;
         PCC = Dijkstra.PCC;
+        origine = Dijkstra.origine;
+        arrivee = Dijkstra.arrivee;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -36,11 +40,15 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.BLUE);
-        for (int i = 0; i < PCC.size() - 2; i++){
+        for (int i = 0; i < PCC.size() - 1; i++){
             g.drawLine(PCC.get(i).getX(), PCC.get(i).getY(), PCC.get(i + 1).getX(), PCC.get(i + 1).getY());
             g.fillOval(PCC.get(i).getX(), PCC.get(i).getY(), 4, 4);
             g.fillOval(PCC.get(i+1).getX(), PCC.get(i+1).getY(), 4, 4);
         }
+        
+        g.setColor(Color.BLACK);
+        origine.afficher(g);
+        arrivee.afficher(g);
     }
     
     public void addObstacle(Obstacle o){
