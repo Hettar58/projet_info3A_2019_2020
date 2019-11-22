@@ -17,18 +17,19 @@ public class Dijkstra extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
-    public static final int POINTS = 5000;
+    public static final int POINTS = 1000;
     public static final int OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
     public static final int R = 50;        //rayon pour prendre en compte un point dans les calculs
-    public static final int R_VISION = 50;  //rayon pour la génération des points en mode itératif
+    public static final double SAVE_THRESOLD = 1.15;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;
-    public static ArrayList<Sommet> graphe_purge;
+    public static ArrayList<Sommet> graphe_origine;
+    public static ArrayList<Sommet> graphe_arrivee;
     public static ArrayList<Sommet> PCC;
     Sommet origine;
     Sommet arrivee;
@@ -44,10 +45,32 @@ public class Dijkstra extends JFrame{
         this.setVisible(true);
         
         init();
+        graphe_origine = ALCopy(graphe);
+        graphe_arrivee = ALCopy(graphe);
+        
+        System.out.println(graphe_origine.get(0));
+        System.out.println(graphe_arrivee.get(0));
+        graphe_origine = dijkstra(origine, arrivee, graphe_origine);
+        System.out.println(graphe_origine.size());
+        //graphe_arrivee = dijkstra(arrivee, origine, graphe_arrivee);
+        System.out.println(graphe_arrivee.size());
+        
+        for(int i = 0; i < graphe.size() - 1; i++){
+            double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / graphe_arrivee.get(i).distance;
+            if (d < SAVE_THRESOLD){
+                graphe.remove(graphe.get(i));
+            }
+            System.out.println(graphe_origine.get(i).distance + "  " + graphe_arrivee.get(i).distance);
+        }
+        
+        
+    }
+    
+    public ArrayList<Sommet> dijkstra(Sommet origine, Sommet arrivee, ArrayList<Sommet> graphe){
+        ArrayList<Sommet> output = new ArrayList<Sommet>();
         Sommet s1 = origine;
         do{
             s1 = find_min(graphe);
-            //double d = PCC.get(PCC.size() -1).getDistance() + Point.calcDistance(s1, PCC.get(PCC.size() -1));
             if (s1 != null){
                 for (int i = 0; i <= s1.voisins.size() - 1; i++){
                     double d = s1.getArc(i);
@@ -55,30 +78,20 @@ public class Dijkstra extends JFrame{
                     if (s.distance > s1.distance + d){
                         s.distance = s1.getDistance() + d;
                         s.pred = s1;
-                        System.out.println(d);
                     }
                 }
-                System.out.println(s1.pos.toString());
+                output.add(s1);
+                graphe.remove(s1);
             }
-            graphe_purge.add(s1);
-            graphe.remove(s1);
         }while(s1 != arrivee && s1 != null);
-        
         
         Sommet s = arrivee;
         while (s != null){
+            System.out.println(s);
             PCC.add(s);
             s = s.pred;
         }
-        
-        /*
-        graphe.clear();
-        graphe = PCC;
-        
-        for (int i = 0; i < POINTS - graphe.size(); i++){
-            graphe.add(generatePoint(3));
-            System.out.println("regen des points");
-        }*/
+        return output;
     }
     
     public void init(){
@@ -86,7 +99,8 @@ public class Dijkstra extends JFrame{
         graphe = new ArrayList<Sommet>();
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
-        graphe_purge = new ArrayList<Sommet>();
+        graphe_origine = new ArrayList<Sommet>();
+        graphe_arrivee = new ArrayList<Sommet>();
         generateObstacles();
         
         Point p_origine = new Point(5, 5);
@@ -203,7 +217,13 @@ public class Dijkstra extends JFrame{
             return p;
         }
     }
-    
+    public ArrayList<Sommet> ALCopy (ArrayList<Sommet> al_origin){
+        ArrayList<Sommet> output = new ArrayList<Sommet>();
+        for (int i = 0; i <= al_origin.size() - 1; i++){
+            output.add(new Sommet(al_origin.get(i)));
+        }
+        return output;
+    }
     /**
      * @param args the command line arguments
      */

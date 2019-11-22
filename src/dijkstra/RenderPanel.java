@@ -24,7 +24,7 @@ public class RenderPanel extends JPanel{
         obstacles = Dijkstra.obstacles;
         points = Dijkstra.graphe;
         PCC = Dijkstra.PCC;
-        graphe_purge = Dijkstra.graphe_purge;
+        graphe_purge = Dijkstra.graphe;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);

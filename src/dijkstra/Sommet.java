@@ -25,6 +25,14 @@ public class Sommet {
         arcs = new ArrayList<Double>();
     }
     
+    public Sommet(Sommet p){
+        this.pos = p.pos;
+        this.voisins = p.voisins;
+        this.arcs = p.arcs;
+        this.pred = p.pred;
+        this.distance = p.distance;
+    }
+    
     public void addVoisin(Sommet s, double d){
         voisins.add(s);
         arcs.add(d);
