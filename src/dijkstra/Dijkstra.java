@@ -121,25 +121,13 @@ public class Dijkstra extends JFrame{
     }
     
     public Point find_min(ArrayList<Point> Q, Point centre){
-        /*double mini = R;
+        double mini = INFINI;
         Point output = null;
         for (Point p : Q){
-            double distance = Point.calcDistance(origine, p);
-            if (distance < mini){
-                output = p;
-                mini = p.getDistance();
-            }
-        }*/
-        
-        double mini = 0;
-        double max = R;
-        double mini_ar = INFINI;
-        Point output = null;
-        for (Point p : Q){
-            double d_origine = Point.calcDistance(centre, p);
-            double d = Point.calcDistance(arrivee, p);
-            if (d <= mini_ar && d_origine <= R){
-                mini_ar = d;
+            double d_centre = Point.calcDistance(centre, p);
+            double d_arrivee = Point.calcDistance(arrivee, p);
+            if (d_arrivee <= mini && d_centre <= R){
+                mini = d_arrivee;
                 output = p;
             }
         }
