@@ -15,15 +15,18 @@ import javax.swing.*;
  */
 public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
+
     ArrayList<Sommet> points;                 //a voir avec le HEAP
     ArrayList<Sommet> PCC;
     ArrayList<Sommet> graphe_purge;
+
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
         obstacles = Dijkstra.obstacles;
         points = Dijkstra.graphe;
         PCC = Dijkstra.PCC;
+
         graphe_purge = Dijkstra.graphe;
     }
     public void draw(Graphics g){
@@ -42,11 +45,16 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.BLUE);
+
         for (int i = 0; i < PCC.size() - 2; i++){
             g.drawLine(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), PCC.get(i + 1).pos.getX(), PCC.get(i + 1).pos.getY());
             g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
+        
+        g.setColor(Color.BLACK);
+        origine.afficher(g);
+        arrivee.afficher(g);
     }
     
     @Override

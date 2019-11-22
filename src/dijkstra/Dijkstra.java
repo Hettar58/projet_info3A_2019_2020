@@ -17,6 +17,7 @@ public class Dijkstra extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
+
     public static final int POINTS = 1000;
     public static final int OBSTACLES = 10;
     public static final int WIDTH = 1024;
@@ -33,6 +34,7 @@ public class Dijkstra extends JFrame{
     public static ArrayList<Sommet> PCC;
     Sommet origine;
     Sommet arrivee;
+
     //public static Heap graphe;
     RenderPanel UI;
 
@@ -84,7 +86,7 @@ public class Dijkstra extends JFrame{
                 graphe.remove(s1);
             }
         }while(s1 != arrivee && s1 != null);
-        
+
         Sommet s = arrivee;
         while (s != null){
             System.out.println(s);
@@ -103,6 +105,7 @@ public class Dijkstra extends JFrame{
         graphe_arrivee = new ArrayList<Sommet>();
         generateObstacles();
         
+
         Point p_origine = new Point(5, 5);
         origine = new Sommet(p_origine);
         graphe.add(origine);
@@ -131,11 +134,11 @@ public class Dijkstra extends JFrame{
                 }
             }
         }
-        
         UI = new RenderPanel();
         this.add(UI);
     }
     
+
     public Sommet find_min(ArrayList<Sommet> graphe){
         /*double mini = INFINI;
         Sommet output = null;
@@ -153,6 +156,7 @@ public class Dijkstra extends JFrame{
             if (graphe.get(i).getDistance() < mini){
                 output = graphe.get(i);
                 mini = output.getDistance();
+
             }
         }
         return output;
@@ -186,7 +190,7 @@ public class Dijkstra extends JFrame{
     //mode == 1:    vérification de collision
     //mode == 2:    vérification de collision ET inclusion dans le rayon.
     public Point generatePoint(int mode){
-        if (mode == 1){
+        if (mode == 0){
             int x = (int)(1+(WIDTH - 1) * Math.random());
             int y = (int)(1+(HEIGHT -1) * Math.random());
             Point p = new Point(x, y);
