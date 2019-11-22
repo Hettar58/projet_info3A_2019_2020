@@ -15,8 +15,8 @@ import javax.swing.*;
  */
 public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
-    ArrayList<Point> points;                 //a voir avec le HEAP
-    ArrayList<Point> PCC;
+    ArrayList<Sommet> points;                 //a voir avec le HEAP
+    ArrayList<Sommet> PCC;
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
@@ -31,24 +31,16 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.RED);
-        for (Point p : points){
-            p.afficher(g);
+        for (Sommet s : points){
+            s.pos.afficher(g);
         }
         
         g.setColor(Color.BLUE);
         for (int i = 0; i < PCC.size() - 2; i++){
-            g.drawLine(PCC.get(i).getX(), PCC.get(i).getY(), PCC.get(i + 1).getX(), PCC.get(i + 1).getY());
-            g.fillOval(PCC.get(i).getX(), PCC.get(i).getY(), 4, 4);
-            g.fillOval(PCC.get(i+1).getX(), PCC.get(i+1).getY(), 4, 4);
+            g.drawLine(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), PCC.get(i + 1).pos.getX(), PCC.get(i + 1).pos.getY());
+            g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
+            g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
-    }
-    
-    public void addObstacle(Obstacle o){
-        obstacles.add(o);
-    }
-    
-    public void addPoint(Point p){
-        points.add(p);
     }
     
     @Override

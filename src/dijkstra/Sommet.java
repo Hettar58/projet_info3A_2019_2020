@@ -33,6 +33,6 @@ public class Sommet {
     }
     
     public double getDistance(int index){
-        return arcs.get(i);
+        return arcs.get(index);
     }
 }
