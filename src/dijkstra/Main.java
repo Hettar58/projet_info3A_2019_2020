@@ -13,13 +13,13 @@ import javax.swing.JFrame;
  *
  * @author yt646712
  */
-public class Dijkstra extends JFrame{
+public class Main extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
 
-    public static final int POINTS = 1000;
-    public static final int OBSTACLES = 10;
+    public static final int POINTS = 1500;
+    public static final int OBSTACLES = 0;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
@@ -28,9 +28,10 @@ public class Dijkstra extends JFrame{
     public static final double SAVE_THRESOLD = 1.15;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
-    public static ArrayList<Sommet> graphe;
-    public static ArrayList<Sommet> graphe_origine;
-    public static ArrayList<Sommet> graphe_arrivee;
+    public static ArrayList<Sommet> graphe;            //graphe tampon
+    ArrayList<Sommet> graphe_arrivee;    //graphe avec les sommets orientés vers l'arrivee
+    ArrayList<Sommet> graphe_origine;    //grapghe avec les sommets orientés vers l'arrivée
+    ArrayList<Sommet> graphe_copy;
     public static ArrayList<Sommet> PCC;
     Sommet origine;
     Sommet arrivee;
@@ -39,7 +40,7 @@ public class Dijkstra extends JFrame{
     RenderPanel UI;
 
     
-    public Dijkstra(){
+    public Main(){
         this.setTitle("Dijkstra");
         this.setSize(WIDTH, HEIGHT);
         this.setLocationRelativeTo(null);
@@ -47,17 +48,69 @@ public class Dijkstra extends JFrame{
         this.setVisible(true);
         
         init();
-        graphe_origine = ALCopy(graphe);
-        graphe_arrivee = ALCopy(graphe);
+        graphe_copy = ALCopy(graphe);   // sauvegarde du graphe
         
-        System.out.println(graphe_origine.get(0));
-        System.out.println(graphe_arrivee.get(0));
-        graphe_origine = dijkstra(origine, arrivee, graphe_origine);
+        //calcul des OS
+        Sommet s1 = origine;
+        do{
+            s1 = find(graphe, 0);
+            if (s1 != null){
+                for (int i = 0; i <= s1.voisins.size() - 1; i++){
+                    double d = s1.getArc(i);
+                    Sommet s = s1.getVoisin(i);
+                    if (s.distance > s1.distance + d){
+                        s.distance = s1.getDistance() + d;
+                        s.pred = s1;
+                    }
+                }
+                graphe_origine.add(s1);
+                graphe.remove(s1);
+                
+            }
+        }while(s1 != arrivee && s1 != null);
+
+        Sommet s = arrivee;
+        while (s != null){
+            PCC.add(s);
+            s = s.pred;
+        }
+        
+        graphe = ALCopy(graphe_copy);   //restauration du graphe;
+        PCC.clear();
+        
+        //calcul des SA
+        s1 = arrivee;
+        do{
+            s1 = find(graphe, 1);
+            if (s1 != null){
+                for (int i = 0; i <= s1.voisins.size() - 1; i++){
+                    double d = s1.getArc(i);
+                    s = s1.getVoisin(i);
+                    if (s.distance > s1.distance + d){
+                        s.distance = s1.getDistance() + d;
+                        s.pred = s1;
+                    }
+                    //System.out.println(d);
+                }
+                
+                graphe.remove(s1);
+                graphe_arrivee.add(s1);
+            }
+        }while(s1 != origine && s1 != null);
+
+        s = origine;
+        while (s != null){
+            PCC.add(s);
+            s = s.pred;
+        }
+        
+        graphe = ALCopy(graphe_copy);
+        System.out.println(graphe.size());
         System.out.println(graphe_origine.size());
-        //graphe_arrivee = dijkstra(arrivee, origine, graphe_arrivee);
         System.out.println(graphe_arrivee.size());
+        System.out.println(PCC.size());
         
-        for(int i = 0; i < graphe.size() - 1; i++){
+        for(int i = 0; i <= graphe.size() - 1; i++){
             double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / graphe_arrivee.get(i).distance;
             if (d < SAVE_THRESOLD){
                 graphe.remove(graphe.get(i));
@@ -68,31 +121,9 @@ public class Dijkstra extends JFrame{
         
     }
     
-    public ArrayList<Sommet> dijkstra(Sommet origine, Sommet arrivee, ArrayList<Sommet> graphe){
+    public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, ArrayList<Sommet> pgraphe){
         ArrayList<Sommet> output = new ArrayList<Sommet>();
-        Sommet s1 = origine;
-        do{
-            s1 = find_min(graphe);
-            if (s1 != null){
-                for (int i = 0; i <= s1.voisins.size() - 1; i++){
-                    double d = s1.getArc(i);
-                    Sommet s = s1.getVoisin(i);
-                    if (s.distance > s1.distance + d){
-                        s.distance = s1.getDistance() + d;
-                        s.pred = s1;
-                    }
-                }
-                output.add(s1);
-                graphe.remove(s1);
-            }
-        }while(s1 != arrivee && s1 != null);
-
-        Sommet s = arrivee;
-        while (s != null){
-            System.out.println(s);
-            PCC.add(s);
-            s = s.pred;
-        }
+       //A REMPLIR
         return output;
     }
     
@@ -101,6 +132,7 @@ public class Dijkstra extends JFrame{
         graphe = new ArrayList<Sommet>();
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
+        graphe_copy = new ArrayList<Sommet>();
         graphe_origine = new ArrayList<Sommet>();
         graphe_arrivee = new ArrayList<Sommet>();
         generateObstacles();
@@ -119,7 +151,7 @@ public class Dijkstra extends JFrame{
         //generateStaticPoints();
         
         //arrivee = graphe.get(MAX_POINTS - 1);
-        Point p_arrivee = new Point(1019, 763);
+        Point p_arrivee = new Point(1019, 730);
         arrivee = new Sommet(p_arrivee);
         arrivee.distance = INFINI;
         graphe.add(arrivee);
@@ -139,28 +171,25 @@ public class Dijkstra extends JFrame{
     }
     
 
-    public Sommet find_min(ArrayList<Sommet> graphe){
-        /*double mini = INFINI;
+    //mode == 0: cherche le minimum
+    //mode == 1: cherche le maximum
+    public Sommet find(ArrayList<Sommet> graphe, int mode){
         Sommet output = null;
-        for (Sommet s : Q){
-            double distance = Point.calcDistance(origine.pos, s.pos);
-            if (distance <= mini && distance <= R){
-                output = s;
-                mini = s.pos.getDistance();
-            }
-        }*/
-        
-        Sommet output = null;
-        double mini = INFINI;
+        double ref = mode == 0 ? INFINI : 0;
         for (int i = 0; i <= graphe.size() -1; i++){
-            if (graphe.get(i).getDistance() < mini){
+            if (graphe.get(i).getDistance() < ref && mode == 0){
                 output = graphe.get(i);
-                mini = output.getDistance();
-
+                ref = output.getDistance();
+            }
+            else if(graphe.get(i).distance > ref && mode == 1){
+                output = graphe.get(i);
+                ref = output.getDistance();
             }
         }
         return output;
     }
+    
+    
     
     public void generateObstacles(){
         for (int i = 0; i < OBSTACLES; i++){
@@ -234,7 +263,7 @@ public class Dijkstra extends JFrame{
     public static void main(String[] args){
         System.setProperty("file.encoding", "UTF-8");
         EventQueue.invokeLater(() -> {
-            Dijkstra app = new Dijkstra();
+            Main app = new Main();
         });
     }   
 }

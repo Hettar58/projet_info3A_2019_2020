@@ -23,11 +23,10 @@ public class RenderPanel extends JPanel{
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
-        obstacles = Dijkstra.obstacles;
-        points = Dijkstra.graphe;
-        PCC = Dijkstra.PCC;
+        obstacles = Main.obstacles;
+        PCC = Main.PCC;
 
-        graphe_purge = Dijkstra.graphe;
+        graphe_purge = Main.graphe;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -51,10 +50,6 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
-        
-        g.setColor(Color.BLACK);
-        origine.afficher(g);
-        arrivee.afficher(g);
     }
     
     @Override
