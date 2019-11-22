@@ -21,8 +21,8 @@ public class Rectangle extends Obstacle{
     }
     
     @Override
-    public boolean collision(Point p){
-        if (ext1.getX() < p.getX() && ext2.getX() > p.getX() && ext1.getY() < p.getY() && ext2.getY() > p.getY()){
+    public boolean collision(Sommet s){
+        if (ext1.getX() < s.pos.getX() && ext2.getX() > s.pos.getX() && ext1.getY() < s.pos.getY() && ext2.getY() > s.pos.getY()){
             return true;
         }
         else{

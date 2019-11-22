@@ -17,17 +17,18 @@ public class Dijkstra extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
-    public static final int POINTS = 100;
-    public static final int OBSTACLES = 0;
+    public static final int POINTS = 5000;
+    public static final int OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static final int R = 75;        //rayon pour prendre en compte un point dans les calculs
+    public static final int R = 50;        //rayon pour prendre en compte un point dans les calculs
     public static final int R_VISION = 50;  //rayon pour la génération des points en mode itératif
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;
+    public static ArrayList<Sommet> graphe_purge;
     public static ArrayList<Sommet> PCC;
     Sommet origine;
     Sommet arrivee;
@@ -45,21 +46,31 @@ public class Dijkstra extends JFrame{
         init();
         Sommet s1 = origine;
         do{
-            s1 = find_min(graphe, s1);
+            s1 = find_min(graphe);
             //double d = PCC.get(PCC.size() -1).getDistance() + Point.calcDistance(s1, PCC.get(PCC.size() -1));
             if (s1 != null){
-                PCC.add(s1);
-                graphe.remove(s1);
-                for (Sommet s : graphe){
-                    double d = Point.calcDistance(s1.pos, s.pos);
-                    if (d <= R){
-                        s.pos.setDistance(d);
+                for (int i = 0; i <= s1.voisins.size() - 1; i++){
+                    double d = s1.getArc(i);
+                    Sommet s = s1.getVoisin(i);
+                    if (s.distance > s1.distance + d){
+                        s.distance = s1.getDistance() + d;
+                        s.pred = s1;
+                        System.out.println(d);
                     }
                 }
-                System.out.println(s1.toString());
+                System.out.println(s1.pos.toString());
             }
-
+            graphe_purge.add(s1);
+            graphe.remove(s1);
         }while(s1 != arrivee && s1 != null);
+        
+        
+        Sommet s = arrivee;
+        while (s != null){
+            PCC.add(s);
+            s = s.pred;
+        }
+        
         /*
         graphe.clear();
         graphe = PCC;
@@ -75,6 +86,7 @@ public class Dijkstra extends JFrame{
         graphe = new ArrayList<Sommet>();
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
+        graphe_purge = new ArrayList<Sommet>();
         generateObstacles();
         
         Point p_origine = new Point(5, 5);
@@ -82,29 +94,51 @@ public class Dijkstra extends JFrame{
         graphe.add(origine);
         for (int i = 0; i < POINTS - 2; i++){
             Point p = generatePoint(2);
-            p.setDistance(Point.calcDistance(p, origine.pos));
             //graphe.addObject(s, i);
             Sommet s = new Sommet(p);
+            s.distance = INFINI;
             graphe.add(s);
         }
         //generateStaticPoints();
         
         //arrivee = graphe.get(MAX_POINTS - 1);
-        Point p_arrivee = new Point(800, 600);
+        Point p_arrivee = new Point(1019, 763);
         arrivee = new Sommet(p_arrivee);
+        arrivee.distance = INFINI;
         graphe.add(arrivee);
+        
+        for (Sommet s : graphe){
+            for (Sommet s2 : graphe){
+                double d = Sommet.Distance(s, s2);
+                if (d <= R){
+                    s.addVoisin(s2, d);
+                    s2.addVoisin(s, d);
+                    
+                }
+            }
+        }
+        
         UI = new RenderPanel();
         this.add(UI);
     }
     
-    public Sommet find_min(ArrayList<Sommet> Q, Sommet origine){
-        double mini = INFINI;
+    public Sommet find_min(ArrayList<Sommet> graphe){
+        /*double mini = INFINI;
         Sommet output = null;
         for (Sommet s : Q){
             double distance = Point.calcDistance(origine.pos, s.pos);
             if (distance <= mini && distance <= R){
                 output = s;
                 mini = s.pos.getDistance();
+            }
+        }*/
+        
+        Sommet output = null;
+        double mini = INFINI;
+        for (int i = 0; i <= graphe.size() -1; i++){
+            if (graphe.get(i).getDistance() < mini){
+                output = graphe.get(i);
+                mini = output.getDistance();
             }
         }
         return output;
@@ -154,12 +188,12 @@ public class Dijkstra extends JFrame{
                 int y = (int)(1+(HEIGHT - MARGIN) * Math.random());
                 p = new Point(x, y);
                 for (int i = 0; i < obstacles.size(); i++){
-                    if (obstacles.get(i).collision(p) == true){
+                    if (obstacles.get(i).collision(new Sommet(p)) == true){
                         collide = true;
                     }
-                    else if (mode == 3){    //vérification d'inclusion.
+                    else if (mode == 3){    //vérification d'inclusion. A MODIFIER
                         for (int j = 0; j < graphe.size() -1; j++){
-                            if (Point.calcDistance(graphe.get(i).pos, p) > R){
+                            if (0> R){
                                 collide = true;
                             }
                         }

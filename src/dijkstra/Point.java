@@ -14,13 +14,10 @@ import java.awt.Graphics;
 public class Point {
     private int x;
     private int y;
-    private double distance;
-    //boolean out;
-
+    
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
-        this.distance = 0;
     }
     
     public int getX() {
@@ -38,26 +35,14 @@ public class Point {
     public void setY(int y) {
         this.y = y;
     }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
     
     public void afficher(Graphics g){
         int r = 2;
         g.fillOval(x-r, y-r, 2 * r, 2 * r);
     }
-    
-    public static double calcDistance(Point p1, Point p2){
-        return Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
-    }
 
     @Override
     public String toString() {
-        return "Point{" + "x=" + x + ", y=" + y + ", distance=" + distance + '}';
+        return "Point{" + "x=" + x + ", y=" + y + '}';
     }
 }

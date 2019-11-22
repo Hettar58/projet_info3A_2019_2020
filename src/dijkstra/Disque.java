@@ -5,7 +5,7 @@
  */
 package dijkstra;
 
-import static dijkstra.Point.calcDistance;
+import static dijkstra.Sommet.Distance;
 import java.awt.Graphics;
 
 /**
@@ -39,8 +39,8 @@ public class Disque extends Obstacle{
     
     
     @Override
-    public boolean collision(Point p){
-        if (calcDistance(centre, p) <= rayon){
+    public boolean collision(Sommet s){
+        if (Distance(s, new Sommet(centre)) <= rayon){
             return true;
         }
         else{

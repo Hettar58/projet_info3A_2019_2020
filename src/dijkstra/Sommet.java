@@ -16,6 +16,8 @@ public class Sommet {
     public Point pos;
     public ArrayList<Sommet> voisins;
     public ArrayList<Double> arcs;
+    public Sommet pred;
+    public double distance;
     
     public Sommet(Point p){
         this.pos = p;
@@ -32,7 +34,19 @@ public class Sommet {
         return voisins.get(index);
     }
     
-    public double getDistance(int index){
+    public double getArc(int index){
         return arcs.get(index);
     }
+    public static double Distance(Sommet s1, Sommet s2){
+        return Math.sqrt(Math.pow(s2.pos.getX() - s1.pos.getX(), 2) + Math.pow(s2.pos.getY() - s1.pos.getY(), 2));
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+    
 }

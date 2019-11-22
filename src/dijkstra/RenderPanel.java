@@ -17,12 +17,14 @@ public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
     ArrayList<Sommet> points;                 //a voir avec le HEAP
     ArrayList<Sommet> PCC;
+    ArrayList<Sommet> graphe_purge;
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
         obstacles = Dijkstra.obstacles;
         points = Dijkstra.graphe;
         PCC = Dijkstra.PCC;
+        graphe_purge = Dijkstra.graphe_purge;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -31,8 +33,12 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.RED);
-        for (Sommet s : points){
+        for (Sommet s : graphe_purge){
             s.pos.afficher(g);
+            for (Sommet s2 : s.voisins){
+                g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
+                s2.pos.afficher(g);
+            }
         }
         
         g.setColor(Color.BLUE);
