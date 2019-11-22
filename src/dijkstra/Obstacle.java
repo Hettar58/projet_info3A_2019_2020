@@ -13,5 +13,5 @@ import java.awt.Graphics;
  */
 abstract class Obstacle {
     abstract void afficher(Graphics g);
-    abstract boolean collision(Point p);
+    abstract boolean collision(Sommet s);
 }

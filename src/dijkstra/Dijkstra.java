@@ -17,20 +17,24 @@ public class Dijkstra extends JFrame{
     
     public static final int MAX_RAYON = 50;
     public static final int MIN_RAYON = 9;
-    public static final int POINTS = 15000;
+
+    public static final int POINTS = 1000;
     public static final int OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static final int R = 75;        //rayon pour prendre en compte un point dans les calculs
-    public static final int R_VISION = 50;  //rayon pour la génération des points en mode itératif
+    public static final int R = 50;        //rayon pour prendre en compte un point dans les calculs
+    public static final double SAVE_THRESOLD = 1.15;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
-    public static ArrayList<Point> graphe;
-    public static ArrayList<Point> PCC;
-    public static Point origine;
-    public static Point arrivee;
+    public static ArrayList<Sommet> graphe;
+    public static ArrayList<Sommet> graphe_origine;
+    public static ArrayList<Sommet> graphe_arrivee;
+    public static ArrayList<Sommet> PCC;
+    Sommet origine;
+    Sommet arrivee;
+
     //public static Heap graphe;
     RenderPanel UI;
 
@@ -43,92 +47,116 @@ public class Dijkstra extends JFrame{
         this.setVisible(true);
         
         init();
-        Point s1 = origine;
-        PCC.add(origine);
-        do{
-            s1 = find_min(graphe, s1);
-            
-           if (s1 != null){
-                /*if (PCC.size() > 3){
-                    Point p1 = PCC.get(PCC.size() - 2);
-                    Point p2 = PCC.get(PCC.size() - 1);
-                    double d = Point.calcDistance(p1, p2) + Point.calcDistance(p2, s1);
-                    if (d > s1.getDistance() && Point.calcDistance(p1, s1) <= R){
-                        graphe.remove(s1);
-                        PCC.remove(p2);
-                        PCC.add(s1);
-                        for (Point p : graphe){
-                            p.setDistance(Point.calcDistance(s1, p));
-                        }
-                        System.out.println(s1.toString());
-                    }
-                    else{
-                        graphe.remove(s1);
-                        PCC.add(s1);
-                        for (Point p : graphe){
-                            p.setDistance(Point.calcDistance(s1, p));
-                        }
-                        System.out.println(s1.toString());
-                    }
-                    System.out.println(p1.toString());
-                    System.out.println(p2.toString());
-                    System.out.println(d);
-                }
-                else{*/
-                    PCC.add(s1);
-                    graphe.remove(s1);
-                    for (Point p : graphe){
-                        p.setDistance(Point.calcDistance(s1, p));
-                    }
-                    System.out.println(s1.toString());
-                //}
+        graphe_origine = ALCopy(graphe);
+        graphe_arrivee = ALCopy(graphe);
+        
+        System.out.println(graphe_origine.get(0));
+        System.out.println(graphe_arrivee.get(0));
+        graphe_origine = dijkstra(origine, arrivee, graphe_origine);
+        System.out.println(graphe_origine.size());
+        //graphe_arrivee = dijkstra(arrivee, origine, graphe_arrivee);
+        System.out.println(graphe_arrivee.size());
+        
+        for(int i = 0; i < graphe.size() - 1; i++){
+            double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / graphe_arrivee.get(i).distance;
+            if (d < SAVE_THRESOLD){
+                graphe.remove(graphe.get(i));
             }
-
+            System.out.println(graphe_origine.get(i).distance + "  " + graphe_arrivee.get(i).distance);
+        }
+        
+        
+    }
+    
+    public ArrayList<Sommet> dijkstra(Sommet origine, Sommet arrivee, ArrayList<Sommet> graphe){
+        ArrayList<Sommet> output = new ArrayList<Sommet>();
+        Sommet s1 = origine;
+        do{
+            s1 = find_min(graphe);
+            if (s1 != null){
+                for (int i = 0; i <= s1.voisins.size() - 1; i++){
+                    double d = s1.getArc(i);
+                    Sommet s = s1.getVoisin(i);
+                    if (s.distance > s1.distance + d){
+                        s.distance = s1.getDistance() + d;
+                        s.pred = s1;
+                    }
+                }
+                output.add(s1);
+                graphe.remove(s1);
+            }
         }while(s1 != arrivee && s1 != null);
-        
-        /*graphe.clear();
-        graphe = PCC;
-        
-        for (int i = 0; i < POINTS - graphe.size(); i++){
-            graphe.add(generatePoint(3));
-            System.out.println("regen des points");
-        }*/
+
+        Sommet s = arrivee;
+        while (s != null){
+            System.out.println(s);
+            PCC.add(s);
+            s = s.pred;
+        }
+        return output;
     }
     
     public void init(){
         //graphe = new Heap(MAX_POINTS);
-        graphe = new ArrayList<Point>();
-        PCC = new ArrayList<Point>();
+        graphe = new ArrayList<Sommet>();
+        PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
+        graphe_origine = new ArrayList<Sommet>();
+        graphe_arrivee = new ArrayList<Sommet>();
         generateObstacles();
         
-        origine = new Point(5, 5);
+
+        Point p_origine = new Point(5, 5);
+        origine = new Sommet(p_origine);
         graphe.add(origine);
         for (int i = 0; i < POINTS - 2; i++){
-            Point p = generatePoint(1);
-            p.setDistance(Point.calcDistance(p, origine));
-            //graphe.addObject(p, i);
-            graphe.add(p);
+            Point p = generatePoint(2);
+            //graphe.addObject(s, i);
+            Sommet s = new Sommet(p);
+            s.distance = INFINI;
+            graphe.add(s);
         }
         //generateStaticPoints();
         
-//        arrivee = graphe.get(POINTS - 1);
-        arrivee = new Point(800, 600);
-        arrivee.setDistance(Point.calcDistance(origine, arrivee));
+        //arrivee = graphe.get(MAX_POINTS - 1);
+        Point p_arrivee = new Point(1019, 763);
+        arrivee = new Sommet(p_arrivee);
+        arrivee.distance = INFINI;
         graphe.add(arrivee);
+        
+        for (Sommet s : graphe){
+            for (Sommet s2 : graphe){
+                double d = Sommet.Distance(s, s2);
+                if (d <= R){
+                    s.addVoisin(s2, d);
+                    s2.addVoisin(s, d);
+                    
+                }
+            }
+        }
         UI = new RenderPanel();
         this.add(UI);
     }
     
-    public Point find_min(ArrayList<Point> Q, Point centre){
+
+    public Sommet find_min(ArrayList<Sommet> graphe){
+        /*double mini = INFINI;
+        Sommet output = null;
+        for (Sommet s : Q){
+            double distance = Point.calcDistance(origine.pos, s.pos);
+            if (distance <= mini && distance <= R){
+                output = s;
+                mini = s.pos.getDistance();
+            }
+        }*/
+        
+        Sommet output = null;
         double mini = INFINI;
-        Point output = null;
-        for (Point p : Q){
-            double d_centre = Point.calcDistance(centre, p);
-            double d_arrivee = Point.calcDistance(arrivee, p);
-            if (d_arrivee <= mini && d_centre <= R){
-                mini = d_arrivee;
-                output = p;
+        for (int i = 0; i <= graphe.size() -1; i++){
+            if (graphe.get(i).getDistance() < mini){
+                output = graphe.get(i);
+                mini = output.getDistance();
+
             }
         }
         return output;
@@ -178,12 +206,12 @@ public class Dijkstra extends JFrame{
                 int y = (int)(1+(HEIGHT - MARGIN) * Math.random());
                 p = new Point(x, y);
                 for (int i = 0; i < obstacles.size(); i++){
-                    if (obstacles.get(i).collision(p) == true){
+                    if (obstacles.get(i).collision(new Sommet(p)) == true){
                         collide = true;
                     }
-                    else if (mode == 3){    //vérification d'inclusion.
+                    else if (mode == 3){    //vérification d'inclusion. A MODIFIER
                         for (int j = 0; j < graphe.size() -1; j++){
-                            if (Point.calcDistance(graphe.get(i), p) > R){
+                            if (0> R){
                                 collide = true;
                             }
                         }
@@ -193,114 +221,13 @@ public class Dijkstra extends JFrame{
             return p;
         }
     }
-    
-    public void generateStaticPoints(){
-        origine = new Point(5, 5);
-        graphe.add(origine);
-        Point p1 = new Point(94, 377);
-        graphe.add(p1);
-        Point p2 = new Point(479, 233);
-        graphe.add(p2);
-        Point p3 = new Point(1002, 747);
-        graphe.add(p3);
-        Point p4 = new Point(563, 17);
-        graphe.add(p4);
-        Point p5 = new Point(36, 380);
-        graphe.add(p5);
-        Point p6 = new Point(906, 309);
-        graphe.add(p6);
-        Point p7 = new Point(36, 407);
-        graphe.add(p7);
-        Point p8 = new Point(135, 392);
-        graphe.add(p8);
-        Point p9 = new Point(312, 213);
-        graphe.add(p9);
-        Point p10 = new Point(33, 66);
-        graphe.add(p10);
-        Point p11 = new Point(441, 466);
-        graphe.add(p11);
-        Point p12 = new Point(506, 106);
-        graphe.add(p12);
-        Point p13 = new Point(21, 378);
-        graphe.add(p13);
-        Point p14 = new Point(199, 161);
-        graphe.add(p14);
-        Point p15 = new Point(995, 187);
-        graphe.add(p15);
-        Point p16 = new Point(747, 354);
-        graphe.add(p16);
-        Point p17 = new Point(190, 333);
-        graphe.add(p17);
-        Point p18 = new Point(320, 245);
-        graphe.add(p18);
-        Point p19 = new Point(710, 436);
-        graphe.add(p19);
-        Point p20 = new Point(827, 111);
-        graphe.add(p20);
-        Point p21 = new Point(131, 416);
-        graphe.add(p21);
-        Point p22= new Point(820, 646);
-        graphe.add(p22);
-        Point p23= new Point(167, 587);
-        graphe.add(p23);
-        Point p24= new Point(485, 209);
-        graphe.add(p24);
-        Point p25= new Point(305, 312);
-        graphe.add(p25);
-        Point p26= new Point(358, 648);
-        graphe.add(p26);
-        Point p27= new Point(99, 364);
-        graphe.add(p27);
-        Point p28= new Point(200, 211);
-        graphe.add(p28);
-        Point p29= new Point(804, 53);
-        graphe.add(p29);
-        Point p30= new Point(610, 6);
-        graphe.add(p30);
-        Point p31= new Point(453, 729);
-        graphe.add(p31);
-        Point p32= new Point(403, 512);
-        graphe.add(p32);
-        Point p33= new Point(503, 687);
-        graphe.add(p33);
-        Point p34= new Point(860, 599);
-        graphe.add(p34);
-        Point p35= new Point(219, 205);
-        graphe.add(p35);
-        Point p36= new Point(64, 586);
-        graphe.add(p36);
-        Point p37= new Point(380, 278);
-        graphe.add(p37);
-        Point p38= new Point(896, 268);
-        graphe.add(p38);
-        Point p39= new Point(1001, 165);
-        graphe.add(p39);
-        Point p40= new Point(819, 259);
-        graphe.add(p40);
-        Point p41= new Point(620, 368);
-        graphe.add(p41);
-        Point p42= new Point(775, 673);
-        graphe.add(p42);
-        Point p43= new Point(554, 433);
-        graphe.add(p43);
-        Point p44= new Point(17, 411);
-        graphe.add(p44);
-        Point p45= new Point(10, 402);
-        graphe.add(p45);
-        Point p46= new Point(432, 254);
-        graphe.add(p46);
-        Point p47= new Point(819, 582);
-        graphe.add(p47);
-        Point p48= new Point(800, 554);
-        graphe.add(p48);
-        Point arrivee= new Point(800, 600);
-        graphe.add(arrivee);
-        
-        for (int i = 1; i < graphe.size() - 1; i++){
-            graphe.get(i).setDistance(Point.calcDistance(origine, graphe.get(i)));
+    public ArrayList<Sommet> ALCopy (ArrayList<Sommet> al_origin){
+        ArrayList<Sommet> output = new ArrayList<Sommet>();
+        for (int i = 0; i <= al_origin.size() - 1; i++){
+            output.add(new Sommet(al_origin.get(i)));
         }
+        return output;
     }
-    
     /**
      * @param args the command line arguments
      */
