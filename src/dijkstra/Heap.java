@@ -20,15 +20,16 @@ public class Heap {
         this.size = 0;
     }
     
-    private int pere(int index){
+    public int pere(int index){
         return tab[index / 2].key;
     }
     
-    private int filsGauche(int index){
+    public int filsGauche(int index){
         return tab[2 * index].key;
     }
     
-    private int filsDroit(int index){
+    
+    public int filsDroit(int index){
         return tab[2 * index + 1].key;
     }
     
@@ -46,7 +47,8 @@ public class Heap {
     }
     
     private void upHeap(int index){
-        if (index / 2 != 0){
+        //System.out.println(index / 2);
+        if (index / 2 > size){
             if (pere(index) > tab[index].getKey()){
                 swap(index, index / 2);
                 upHeap(index / 2);
@@ -74,6 +76,9 @@ public class Heap {
         Node n = new Node(key, obj);
         size++;
         int i = size;
+        if (size < capacity){
+            tab[size] = n;
+        }
         /*boolean inserted = false;
         int i = 0;
         while(inserted == false && i < capacity / 2){
@@ -102,8 +107,10 @@ public class Heap {
     
     public String toString(){
         String s = "";
-        for (int i = 0; i < size - 1; i++){
-            s += tab[i].toString() + "\n";
+        for (int i = 0; i <= size; i++){
+            if (tab[i] != null){
+                s += tab[i].toString() + "\n";
+            }
         }
         return s;
     }

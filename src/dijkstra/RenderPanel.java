@@ -50,6 +50,7 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
+        System.out.println("render");
     }
     
     @Override

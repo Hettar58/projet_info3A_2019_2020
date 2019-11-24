@@ -75,7 +75,7 @@ public class Main extends JFrame{
             s = s.pred;
         }
         
-        graphe = ALCopy(graphe_copy);   //restauration du graphe;
+        graphe = ALCopy(graphe_origine);   //copie du graphe avec les distances à l'origine déja définies
         PCC.clear();
         
         //calcul des SA
@@ -105,6 +105,7 @@ public class Main extends JFrame{
         }
         
         graphe = ALCopy(graphe_copy);
+        
         System.out.println(graphe.size());
         System.out.println(graphe_origine.size());
         System.out.println(graphe_arrivee.size());
@@ -112,11 +113,13 @@ public class Main extends JFrame{
         
         for(int i = 0; i <= graphe.size() - 1; i++){
             double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / graphe_arrivee.get(i).distance;
-            if (d < SAVE_THRESOLD){
+            if (d > SAVE_THRESOLD){
                 graphe.remove(graphe.get(i));
+                System.out.println(graphe.get(i).pos.toString());
             }
-            System.out.println(graphe_origine.get(i).distance + "  " + graphe_arrivee.get(i).distance);
+            System.out.println(d);
         }
+        System.out.println(graphe.size());
         
         
     }
