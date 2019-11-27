@@ -20,6 +20,7 @@ public class RenderPanel extends JPanel{
     ArrayList<Sommet> PCC;
     ArrayList<Sommet> graphe;
     ArrayList<Sommet> graphe_test;
+    ArrayList<Sommet> PCC_copy;
 
     
     public RenderPanel(){
@@ -28,6 +29,7 @@ public class RenderPanel extends JPanel{
         PCC = Main.PCC;
         graphe = Main.graphe;
         graphe_test = Main.graphe_copy;
+       
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -48,10 +50,10 @@ public class RenderPanel extends JPanel{
         g.setColor(Color.RED);
         for (Sommet s : graphe){
             s.pos.afficher(g);
-            /*for (Sommet s2 : s.voisins){
+            for (Sommet s2 : s.voisins){
                 g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
                 s2.pos.afficher(g);
-            }*/
+            }
         }
         
         g.setColor(Color.BLUE);
@@ -61,6 +63,12 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
         
+        g.setColor(Color.MAGENTA);
+        for (int i = 0; i < PCC_copy.size() - 2; i++){
+            g.drawLine(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), PCC.get(i + 1).pos.getX(), PCC.get(i + 1).pos.getY());
+            g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
+            g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
+        }
 
         System.out.println("Render: " + graphe.size() + " pts (graphe) | " + obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
     }

@@ -19,7 +19,7 @@ public class Main extends JFrame{
     public static final int MIN_RAYON = 9;
 
     public static final int POINTS = 1500;
-    public static final int OBSTACLES = 0;
+    public static final int OBSTACLES = 10;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
@@ -30,10 +30,8 @@ public class Main extends JFrame{
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;            //graphe tampon
-    ArrayList<Sommet> graphe_arrivee;    //graphe avec les sommets orientés vers l'arrivee
-    ArrayList<Sommet> graphe_origine;    //grapghe avec les sommets orientés vers l'arrivée
-    public static ArrayList<Sommet> graphe_copy;
-    public static ArrayList<Sommet> PCC;
+    public static ArrayList<Sommet> graphe_copy;       //copie du graphe d'origine
+    public static ArrayList<Sommet> PCC;                //PCCX
     Sommet origine;
     Sommet arrivee;
 
@@ -49,12 +47,49 @@ public class Main extends JFrame{
         this.setVisible(true);
         
         init();
-        graphe_copy = ALCopy(graphe);   // sauvegarde du graphe
         
-        //calcul des OS
-        Sommet s1 = origine;
+        PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
+        
+        graphe.clear();
+        origine = new Sommet(new Point(5, 5));
+        origine.distance = 0;
+        graphe.add(origine);
+        
+        for(int i=0; i<= PCC.size()-1; i++){
+            for(int j=0; j<= 100;j++){
+                Point x =PCC.get(i).pos;
+                Sommet s = new Sommet(generatePoint(2, x));
+                s.distance = INFINI;
+                graphe.add(s);
+            }   
+        }
+        
+        arrivee = new Sommet(new Point(1019, 730));
+        arrivee.distance = INFINI;
+        graphe.add(arrivee);
+        generateVoisins(graphe);
+        
+        System.out.println(graphe.size());
+        
+        graphe_copy.clear();
+        ArrayList<Sommet> PCC_copy = ALCopy(PCC);
+        UI.PCC_copy = PCC_copy;
+        
+        PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
+        
+        System.out.println(graphe.size());
+        System.out.println(graphe_copy.size());
+        
+        UI.graphe_test = graphe_copy;
+        UI.graphe = graphe;
+        UI.PCC = PCC;
+    }
+    
+    public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, ArrayList<Sommet> g, ArrayList<Sommet> g_copy){
+        ArrayList<Sommet> output = new ArrayList<Sommet>();
+        Sommet s1 = debut;
         do{
-            s1 = find(graphe, 0);
+            s1 = find(g, 0);
             if (s1 != null){
                 for (int i = 0; i <= s1.voisins.size() - 1; i++){
                     double d = s1.getArc(i);
@@ -64,111 +99,17 @@ public class Main extends JFrame{
                         s.pred = s1;
                     }
                 }
-                graphe_origine.add(s1);
-                graphe.remove(s1);
+                g_copy.add(s1);
+                g.remove(s1);
                 
             }
-        }while(s1 != arrivee && s1 != null);
+        }while(s1 != fin && s1 != null);
 
         Sommet s = arrivee;
         while (s != null){
-            PCC.add(s);
+            output.add(s);
             s = s.pred;
         }
-        
-        graphe.clear();
-        for(int i=0; i<= PCC.size()-1; i++){
-            for(int j=0; j<= 10;j++){
-            Point x =PCC.get(i).pos;
-            s = new Sommet(x);
-            s.distance = INFINI;
-            graphe.add(s);
-            
-            }   
-        }
-        PCC.clear();
-        graphe_origine.clear();
-        System.out.println(graphe.size());
-        
-        s1 = origine;
-        do{
-            s1 = find(graphe, 0);
-            if (s1 != null){
-                for (int i = 0; i <= s1.voisins.size() - 1; i++){
-                    double d = s1.getArc(i);
-                    s = s1.getVoisin(i);
-                    if (s.distance > s1.distance + d){
-                        s.distance = s1.getDistance() + d;
-                        s.pred = s1;
-                    }
-                }
-                graphe_origine.add(s1);
-                graphe.remove(s1);
-                
-            }
-        }while(s1 != arrivee && s1 != null);
-
-        s = arrivee;
-        while (s != null){
-            PCC.add(s);
-            s = s.pred;
-        }
-        
-        UI.graphe = graphe;
-        UI.graphe_test = graphe_origine;
-        
-        //graphe = ALCopy(graphe_origine);   //copie du graphe avec les distances à l'origine déja définies
-        
-        //calcul des SA
-        /*s1 = arrivee;
-        do{
-            s1 = find(graphe, 1);
-            if (s1 != null){
-                for (int i = 0; i <= s1.voisins.size() - 1; i++){
-                    double d = s1.getArc(i);
-                    s = s1.getVoisin(i);
-                    if (s.distance > s1.distance + d){
-                        s.distance = s1.getDistance() + d;
-                        s.pred = s1;
-                    }
-                    //System.out.println(d);
-                }
-                
-                graphe.remove(s1);
-                graphe_arrivee.add(s1);
-            }
-        }while(s1 != origine && s1 != null);
-
-        s = origine;
-        while (s != null){
-            PCC.add(s);
-            s = s.pred;
-        }
-        
-        graphe = ALCopy(graphe_copy);
-        
-        System.out.println(graphe.size());
-        System.out.println(graphe_origine.size());
-        System.out.println(graphe_arrivee.size());
-        System.out.println(PCC.size());
-        
-        for(int i = 0; i < graphe.size(); i++){
-            double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / Sommet.Distance(origine, arrivee);
-            if (d <= SAVE_THRESOLD && graphe.get(i).distance <= R){
-                graphe.remove(i);       
-            }
-            System.out.println(d);
-        }*/
-        
-        
-        System.out.println(graphe.size());
-        UI.graphe = graphe;
-        UI.graphe_test = graphe_copy;
-    }
-    
-    public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, ArrayList<Sommet> pgraphe){
-        ArrayList<Sommet> output = new ArrayList<Sommet>();
-       //A REMPLIR
         return output;
     }
     
@@ -178,8 +119,6 @@ public class Main extends JFrame{
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
         graphe_copy = new ArrayList<Sommet>();
-        graphe_origine = new ArrayList<Sommet>();
-        graphe_arrivee = new ArrayList<Sommet>();
         generateObstacles();
         
 
@@ -193,16 +132,21 @@ public class Main extends JFrame{
             s.distance = INFINI;
             graphe.add(s);
         }
-        //generateStaticPoints();
         
-        //arrivee = graphe.get(MAX_POINTS - 1);
         Point p_arrivee = new Point(1019, 730);
         arrivee = new Sommet(p_arrivee);
         arrivee.distance = INFINI;
         graphe.add(arrivee);
         
-        for (Sommet s : graphe){
-            for (Sommet s2 : graphe){
+        generateVoisins(graphe);
+        
+        UI = new RenderPanel();
+        this.add(UI);
+    }
+    
+    public void generateVoisins(ArrayList<Sommet> g){
+        for (Sommet s : g){
+            for (Sommet s2 : g){
                 double d = Sommet.Distance(s, s2);
                 if (d <= R){
                     s.addVoisin(s2, d);
@@ -211,12 +155,7 @@ public class Main extends JFrame{
                 }
             }
         }
-        UI = new RenderPanel();
-        UI.graphe = graphe;
-        UI.PCC = PCC;
-        this.add(UI);
     }
-    
 
     //mode == 0: cherche le minimum
     //mode == 1: cherche le maximum
