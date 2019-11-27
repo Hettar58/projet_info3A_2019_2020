@@ -26,7 +26,8 @@ public class Main extends JFrame{
     public static final int INFINI = 9999;
     public static final int R = 50;//rayon pour prendre en compte un point dans les calculs
     public static final int r = 30;
-    public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
+    public static final int POINTS_ITER = 20;
+    //public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;            //graphe tampon
@@ -51,37 +52,21 @@ public class Main extends JFrame{
         PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
         
         graphe.clear();
-        origine = new Sommet(new Point(5, 5));
-        origine.distance = 0;
-        graphe.add(origine);
-        
-        for(int i=0; i<= PCC.size()-1; i++){
-            for(int j=0; j<= 100;j++){
-                Point x =PCC.get(i).pos;
-                Sommet s = new Sommet(generatePoint(2, x));
-                s.distance = INFINI;
-                graphe.add(s);
-            }   
-        }
-        
-        arrivee = new Sommet(new Point(1019, 730));
-        arrivee.distance = INFINI;
-        graphe.add(arrivee);
+        generateGraphe(1);
         generateVoisins(graphe);
-        
-        System.out.println(graphe.size());
-        
         graphe_copy.clear();
-        ArrayList<Sommet> PCC_copy = ALCopy(PCC);
-        UI.PCC_copy = PCC_copy;
         
         PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
         
-        System.out.println(graphe.size());
-        System.out.println(graphe_copy.size());
+        graphe.clear();
+        generateGraphe(1);
+        generateVoisins(graphe);
+        graphe_copy.clear();
+        
+        PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
         
         UI.graphe_test = graphe_copy;
-        UI.graphe = graphe;
+        UI.graphe = graphe_copy;
         UI.PCC = PCC;
     }
     
@@ -119,18 +104,42 @@ public class Main extends JFrame{
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
         graphe_copy = new ArrayList<Sommet>();
-        generateObstacles();
         
-
+        
+        generateObstacles();
+        generateGraphe(0);
+        generateVoisins(graphe);
+        
+        UI = new RenderPanel();
+        this.add(UI);
+    }
+    
+    
+    //mode == 0 -> graphe généré sans prise en compte du PCC
+    //mode == 1 -> graphe généré avec prise en compte de r et du PCC.
+    public void generateGraphe(int mode){
+        
         Point p_origine = new Point(5, 5);
         origine = new Sommet(p_origine);
         graphe.add(origine);
-        for (int i = 0; i < POINTS - 2; i++){
-            Point p = generatePoint(2,null);
-            //graphe.addObject(s, i);
-            Sommet s = new Sommet(p);
-            s.distance = INFINI;
-            graphe.add(s);
+        
+        if (mode == 0){
+            for (int i = 0; i < POINTS - 2; i++){
+                Point p = generatePoint(2,null);
+                Sommet s = new Sommet(p);
+                s.distance = INFINI;
+                graphe.add(s);
+            }
+        } 
+        else if (mode == 1){
+            for(int i=0; i<= PCC.size()-1; i++){
+                for(int j=0; j<= POINTS_ITER;j++){
+                    Point x =PCC.get(i).pos;
+                    Sommet s = new Sommet(generatePoint(2, x));
+                    s.distance = INFINI;
+                    graphe.add(s);
+                }   
+            }
         }
         
         Point p_arrivee = new Point(1019, 730);
@@ -138,10 +147,6 @@ public class Main extends JFrame{
         arrivee.distance = INFINI;
         graphe.add(arrivee);
         
-        generateVoisins(graphe);
-        
-        UI = new RenderPanel();
-        this.add(UI);
     }
     
     public void generateVoisins(ArrayList<Sommet> g){

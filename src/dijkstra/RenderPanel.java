@@ -62,13 +62,6 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
-        
-        g.setColor(Color.MAGENTA);
-        for (int i = 0; i < PCC_copy.size() - 2; i++){
-            g.drawLine(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), PCC.get(i + 1).pos.getX(), PCC.get(i + 1).pos.getY());
-            g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
-            g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
-        }
 
         System.out.println("Render: " + graphe.size() + " pts (graphe) | " + obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
     }
