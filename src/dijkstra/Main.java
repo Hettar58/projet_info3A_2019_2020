@@ -31,7 +31,7 @@ public class Main extends JFrame{
     public static ArrayList<Sommet> graphe;            //graphe tampon
     ArrayList<Sommet> graphe_arrivee;    //graphe avec les sommets orientés vers l'arrivee
     ArrayList<Sommet> graphe_origine;    //grapghe avec les sommets orientés vers l'arrivée
-    ArrayList<Sommet> graphe_copy;
+    public static ArrayList<Sommet> graphe_copy;
     public static ArrayList<Sommet> PCC;
     Sommet origine;
     Sommet arrivee;
@@ -119,6 +119,7 @@ public class Main extends JFrame{
         }
         System.out.println(graphe.size());
         UI.graphe = graphe;
+        UI.graphe_test = graphe_copy;
     }
     
     public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, ArrayList<Sommet> pgraphe){

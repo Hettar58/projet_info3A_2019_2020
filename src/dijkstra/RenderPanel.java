@@ -19,14 +19,15 @@ public class RenderPanel extends JPanel{
     ArrayList<Sommet> points;                 //a voir avec le HEAP
     ArrayList<Sommet> PCC;
     ArrayList<Sommet> graphe;
+    ArrayList<Sommet> graphe_test;
 
     
     public RenderPanel(){
         //appels de new a sortir du constructeur
         obstacles = Main.obstacles;
         PCC = Main.PCC;
-
         graphe = Main.graphe;
+        graphe_test = Main.graphe_copy;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -34,13 +35,23 @@ public class RenderPanel extends JPanel{
             o.afficher(g);
         }
         
-        g.setColor(Color.RED);
-        for (Sommet s : graphe){
+        g.setColor(Color.GREEN);
+        for (Sommet s : graphe_test){
             s.pos.afficher(g);
             for (Sommet s2 : s.voisins){
                 g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
                 s2.pos.afficher(g);
             }
+        }
+        
+        
+        g.setColor(Color.RED);
+        for (Sommet s : graphe){
+            s.pos.afficher(g);
+            /*for (Sommet s2 : s.voisins){
+                g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
+                s2.pos.afficher(g);
+            }*/
         }
         
         g.setColor(Color.BLUE);
@@ -50,6 +61,7 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
         
+
         System.out.println("Render: " + graphe.size() + " pts (graphe) | " + obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
     }
     
