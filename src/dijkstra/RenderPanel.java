@@ -18,7 +18,7 @@ public class RenderPanel extends JPanel{
 
     ArrayList<Sommet> points;                 //a voir avec le HEAP
     ArrayList<Sommet> PCC;
-    ArrayList<Sommet> graphe_purge;
+    ArrayList<Sommet> graphe;
 
     
     public RenderPanel(){
@@ -26,7 +26,7 @@ public class RenderPanel extends JPanel{
         obstacles = Main.obstacles;
         PCC = Main.PCC;
 
-        graphe_purge = Main.graphe;
+        graphe = Main.graphe;
     }
     public void draw(Graphics g){
         g.setColor(Color.GRAY);
@@ -35,7 +35,7 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.RED);
-        for (Sommet s : graphe_purge){
+        for (Sommet s : graphe){
             s.pos.afficher(g);
             for (Sommet s2 : s.voisins){
                 g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
@@ -44,13 +44,13 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.BLUE);
-
         for (int i = 0; i < PCC.size() - 2; i++){
             g.drawLine(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), PCC.get(i + 1).pos.getX(), PCC.get(i + 1).pos.getY());
             g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
-        System.out.println("render");
+        
+        System.out.println("Render: " + graphe.size() + " pts (graphe) | " + obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
     }
     
     @Override

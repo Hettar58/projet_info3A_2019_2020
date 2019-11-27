@@ -25,7 +25,7 @@ public class Main extends JFrame{
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
     public static final int R = 50;        //rayon pour prendre en compte un point dans les calculs
-    public static final double SAVE_THRESOLD = 1.15;   //seuil de sauvegarde
+    public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;            //graphe tampon
@@ -76,7 +76,6 @@ public class Main extends JFrame{
         }
         
         graphe = ALCopy(graphe_origine);   //copie du graphe avec les distances à l'origine déja définies
-        PCC.clear();
         
         //calcul des SA
         s1 = arrivee;
@@ -112,16 +111,14 @@ public class Main extends JFrame{
         System.out.println(PCC.size());
         
         for(int i = 0; i <= graphe.size() - 1; i++){
-            double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / graphe_arrivee.get(i).distance;
-            if (d > SAVE_THRESOLD){
-                graphe.remove(graphe.get(i));
-                System.out.println(graphe.get(i).pos.toString());
+            double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / Sommet.Distance(origine, arrivee);
+            if (d >= SAVE_THRESOLD){
+                graphe.remove(i);
             }
             System.out.println(d);
         }
         System.out.println(graphe.size());
-        
-        
+        UI.graphe = graphe;
     }
     
     public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, ArrayList<Sommet> pgraphe){
@@ -170,6 +167,8 @@ public class Main extends JFrame{
             }
         }
         UI = new RenderPanel();
+        UI.graphe = graphe;
+        UI.PCC = PCC;
         this.add(UI);
     }
     

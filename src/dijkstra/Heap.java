@@ -10,6 +10,26 @@ package dijkstra;
  * @author yt646712
  */
 public class Heap {
+    
+       public static void main(String[] args){
+        int taille = 15;
+        Heap tas = new Heap(taille);
+        tas.addObject(null, 1);
+        tas.addObject(null, 5);
+        tas.addObject(null, 2);
+        tas.addObject(null, 3);
+        tas.addObject(null, 7);
+        tas.addObject(null, 4);
+        
+        System.out.println(tas.filsGauche(1));
+        System.out.println(tas.filsDroit(1));
+       
+        System.out.println();
+        System.out.println(tas.toString());
+        System.out.println(tas.size);
+    }
+        
+        
     Node[] tab;
     int capacity;   //capacité maximum
     int size;       //remplissage actuel
@@ -21,7 +41,12 @@ public class Heap {
     }
     
     public int pere(int index){
-        return tab[index / 2].key;
+        if (index/2 > 0 && index/2 < capacity){
+            return tab[index / 2].key;
+        }
+        else{
+            return 0;
+        }
     }
     
     public int filsGauche(int index){
@@ -34,7 +59,7 @@ public class Heap {
     }
     
     private void downHeap(int index){
-        if (2 * index < size){
+        if (2 * index <= size){
             if (filsGauche(index) < tab[index].getKey()){
                 swap(index, 2 * index);
                 downHeap(2 * index);
@@ -48,13 +73,12 @@ public class Heap {
     
     private void upHeap(int index){
         //System.out.println(index / 2);
-        if (index / 2 > size){
             if (pere(index) > tab[index].getKey()){
                 swap(index, index / 2);
                 upHeap(index / 2);
                 System.out.println("upHeap");
             }
-        }
+      
     }
     
     private void swap(int index_n1, int index_n2){
@@ -79,21 +103,7 @@ public class Heap {
         if (size < capacity){
             tab[size] = n;
         }
-        /*boolean inserted = false;
-        int i = 0;
-        while(inserted == false && i < capacity / 2){
-            if (tab[capacity - 1 - i] == null){
-                tab[capacity - 1 - i] = n;
-                inserted = true;
-                i = capacity - 1 - i;
-                size++;
-            }
-            else if(tab[i] == null){
-                tab[i] = n;
-                inserted = true;
-                size++;
-            }
-        }*/
+        System.out.println(size);
         upHeap(i);
     }
     
