@@ -13,6 +13,10 @@ import java.util.ArrayList;
  * @author yann
  */
 public class Sommet {
+
+    static Object get(int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     public Point pos;
     public ArrayList<Sommet> voisins;
     public ArrayList<Double> arcs;

@@ -24,7 +24,8 @@ public class Main extends JFrame{
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static final int R = 50;        //rayon pour prendre en compte un point dans les calculs
+    public static final int R = 50;//rayon pour prendre en compte un point dans les calculs
+    public static final int r = 20;
     public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
@@ -75,10 +76,20 @@ public class Main extends JFrame{
             s = s.pred;
         }
         
-        graphe = ALCopy(graphe_origine);   //copie du graphe avec les distances à l'origine déja définies
+        
+        for(int i=0; i<= PCC.size()-1; i++){
+            Point x =PCC.get(i).pos;
+            graphe.add(new Sommet(generatePoint(2, x)));
+            
+             
+            
+        }
+        
+        
+        //graphe = ALCopy(graphe_origine);   //copie du graphe avec les distances à l'origine déja définies
         
         //calcul des SA
-        s1 = arrivee;
+        /*s1 = arrivee;
         do{
             s1 = find(graphe, 1);
             if (s1 != null){
@@ -110,13 +121,15 @@ public class Main extends JFrame{
         System.out.println(graphe_arrivee.size());
         System.out.println(PCC.size());
         
-        for(int i = 0; i <= graphe.size() - 1; i++){
+        for(int i = 0; i < graphe.size(); i++){
             double d = (graphe_origine.get(i).distance + graphe_arrivee.get(i).distance) / Sommet.Distance(origine, arrivee);
-            if (d >= SAVE_THRESOLD){
-                graphe.remove(i);
+            if (d <= SAVE_THRESOLD && graphe.get(i).distance <= R){
+                graphe.remove(i);       
             }
             System.out.println(d);
-        }
+        }*/
+        
+        
         System.out.println(graphe.size());
         UI.graphe = graphe;
         UI.graphe_test = graphe_copy;
@@ -143,7 +156,7 @@ public class Main extends JFrame{
         origine = new Sommet(p_origine);
         graphe.add(origine);
         for (int i = 0; i < POINTS - 2; i++){
-            Point p = generatePoint(2);
+            Point p = generatePoint(2,null);
             //graphe.addObject(s, i);
             Sommet s = new Sommet(p);
             s.distance = INFINI;
@@ -199,17 +212,17 @@ public class Main extends JFrame{
             int type = (int)(2*Math.random());
             if (type == 0){ //disque
                 int r = (int)(MIN_RAYON + (MAX_RAYON - MIN_RAYON) * Math.random());
-                Point c = generatePoint(0);
+                Point c = generatePoint(2,null);
                 Disque d = new Disque(c, r);
                 obstacles.add(d);
             }
             else{   //rectangle
-                Point ex1  = generatePoint(0);
+                Point ex1  = generatePoint(0,null);
                 Point ex2 = null;
                 
                 //pour faciliter les calculs. implique que ext1 = HG et ext2 = BD
                 do{
-                    ex2 = generatePoint(0);
+                    ex2 = generatePoint(0,null);
                 }while (ex2.getX() <= ex1.getX() || ex2.getY() <= ex1.getY());
                 
                 Rectangle r = new Rectangle(ex1, ex2);
@@ -221,7 +234,7 @@ public class Main extends JFrame{
     //mode == 0:    pas de vérification de collision.
     //mode == 1:    vérification de collision
     //mode == 2:    vérification de collision ET inclusion dans le rayon.
-    public Point generatePoint(int mode){
+    public Point generatePoint(int mode, Point ref){
         if (mode == 0){
             int x = (int)(1+(WIDTH - 1) * Math.random());
             int y = (int)(1+(HEIGHT -1) * Math.random());
@@ -241,12 +254,10 @@ public class Main extends JFrame{
                     if (obstacles.get(i).collision(new Sommet(p)) == true){
                         collide = true;
                     }
-                    else if (mode == 3){    //vérification d'inclusion. A MODIFIER
-                        for (int j = 0; j < graphe.size() -1; j++){
-                            if (0> R){
-                                collide = true;
-                            }
-                        }
+                }
+                if (mode == 2 && ref != null){    //vérification d'inclusion. A MODIFIER
+                    if (Sommet.Distance(new Sommet(ref), new Sommet(p)) >= r){
+                        collide = true;
                     }
                 }
             }while (collide == true);
