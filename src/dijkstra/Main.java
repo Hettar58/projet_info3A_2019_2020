@@ -25,7 +25,7 @@ public class Main extends JFrame{
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
     public static final int R = 50;//rayon pour prendre en compte un point dans les calculs
-    public static final int r = 20;
+    public static final int r = 30;
     public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
     public static ArrayList<Obstacle> obstacles;
@@ -76,13 +76,46 @@ public class Main extends JFrame{
             s = s.pred;
         }
         
-        
+        graphe.clear();
         for(int i=0; i<= PCC.size()-1; i++){
+            for(int j=0; j<= 10;j++){
             Point x =PCC.get(i).pos;
-            graphe.add(new Sommet(generatePoint(2, x)));
+            s = new Sommet(x);
+            s.distance = INFINI;
+            graphe.add(s);
             
+            }   
+        }
+        PCC.clear();
+        graphe_origine.clear();
+        System.out.println(graphe.size());
+        
+        s1 = origine;
+        do{
+            s1 = find(graphe, 0);
+            if (s1 != null){
+                for (int i = 0; i <= s1.voisins.size() - 1; i++){
+                    double d = s1.getArc(i);
+                    s = s1.getVoisin(i);
+                    if (s.distance > s1.distance + d){
+                        s.distance = s1.getDistance() + d;
+                        s.pred = s1;
+                    }
+                }
+                graphe_origine.add(s1);
+                graphe.remove(s1);
+                
+            }
+        }while(s1 != arrivee && s1 != null);
+
+        s = arrivee;
+        while (s != null){
+            PCC.add(s);
+            s = s.pred;
         }
         
+        UI.graphe = graphe;
+        UI.graphe_test = graphe_origine;
         
         //graphe = ALCopy(graphe_origine);   //copie du graphe avec les distances à l'origine déja définies
         
