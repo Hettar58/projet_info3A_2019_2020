@@ -81,8 +81,6 @@ public class Main extends JFrame{
             Point x =PCC.get(i).pos;
             graphe.add(new Sommet(generatePoint(2, x)));
             
-             
-            
         }
         
         
@@ -256,7 +254,7 @@ public class Main extends JFrame{
                     }
                 }
                 if (mode == 2 && ref != null){    //vérification d'inclusion. A MODIFIER
-                    if (Sommet.Distance(new Sommet(ref), new Sommet(p)) >= r){
+                    if (Point.Distance(ref, p) >= r){
                         collide = true;
                     }
                 }

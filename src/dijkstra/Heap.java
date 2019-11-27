@@ -12,25 +12,28 @@ package dijkstra;
 public class Heap {
     
        public static void main(String[] args){
+           
         int taille = 15;
         Heap tas = new Heap(taille);
-        tas.addObject(null, 1);
-        tas.addObject(null, 5);
-        tas.addObject(null, 2);
-        tas.addObject(null, 3);
-        tas.addObject(null, 7);
-        tas.addObject(null, 4);
+        tas.addObject(new Point(1, 0), 1);
+        tas.addObject(new Point(5, 0), 5);
+        tas.addObject(new Point(2, 0), 2);
+        tas.addObject(new Point(3, 0), 3);
+        tas.addObject(new Point(7, 0), 7);
+        tas.addObject(new Point(4, 0), 4);
         
-        System.out.println(tas.filsGauche(1));
-        System.out.println(tas.filsDroit(1));
-       
+        System.out.println(tas.filsGauche(2));
+        System.out.println(tas.filsDroit(2));
+        System.out.println(tas.extractRoot().toString());
+        System.out.println(tab[0].toString());
+        
         System.out.println();
         System.out.println(tas.toString());
         System.out.println(tas.size);
     }
         
         
-    Node[] tab;
+    static Node[] tab;
     int capacity;   //capacité maximum
     int size;       //remplissage actuel
     
@@ -41,7 +44,8 @@ public class Heap {
     }
     
     public int pere(int index){
-        if (index/2 > 0 && index/2 < capacity){
+        int v = index / 2;
+        if (v > 0 && v <= capacity && tab[v] != null){
             return tab[index / 2].key;
         }
         else{
@@ -50,24 +54,34 @@ public class Heap {
     }
     
     public int filsGauche(int index){
-        return tab[2 * index].key;
+        int v = 2 * index;
+        if (v >= 0 && v < capacity && tab[v] != null){
+            return tab[2 * index].key;
+        }
+        else{
+            return Main.INFINI;
+        }
     }
     
     
     public int filsDroit(int index){
-        return tab[2 * index + 1].key;
+        int v = 2 * index + 1;
+        if (v >= 0 && v < capacity && tab[v] != null){
+            return tab[2 * index + 1].key;
+        }
+        else{
+            return Main.INFINI;
+        }
     }
     
     private void downHeap(int index){
-        if (2 * index <= size){
-            if (filsGauche(index) < tab[index].getKey()){
-                swap(index, 2 * index);
-                downHeap(2 * index);
-            }
-            else if(filsDroit(index) < tab[index].getKey()){
-                swap(index, 2 * index + 1);
-                downHeap(2 * index + 1);
-            }
+        if (filsGauche(index) < tab[index].getKey()){
+            swap(index, 2 * index);
+            downHeap(2 * index);
+        }
+        else if(filsDroit(index) < tab[index].getKey()){
+            swap(index, 2 * index + 1);
+            downHeap(2 * index + 1);
         }
     }
     
@@ -82,32 +96,36 @@ public class Heap {
     }
     
     private void swap(int index_n1, int index_n2){
-        Node temp = tab[index_n1];
+        Node temp = tab[index_n2];
         tab[index_n2] = tab[index_n1];
         tab[index_n1] = temp;
     }
     
     public Object extractRoot(){
         Object output = tab[0].getValue();
-        
+        tab[0] = null;
         //première valeur différente de null à la fin du tableau.
         tab[0] = tab[size - 1];
+        tab[size - 1] = null;
         downHeap(0);
         return output;
     }
     
     public void addObject(Object obj, int key){
         Node n = new Node(key, obj);
-        size++;
-        int i = size;
         if (size < capacity){
             tab[size] = n;
         }
-        System.out.println(size);
-        upHeap(i);
+        //System.out.println(size);
+        upHeap(size);
+        size++;
     }
     
     public void clear(){
+        
+    }
+    
+    public void updateKey(int index, int newKey){
         
     }
     
@@ -115,11 +133,12 @@ public class Heap {
         return size;
     }
     
+    
     public String toString(){
         String s = "";
         for (int i = 0; i <= size; i++){
             if (tab[i] != null){
-                s += tab[i].toString() + "\n";
+                s += "" + i + " || " +tab[i].toString() + "\n";
             }
         }
         return s;
@@ -151,7 +170,7 @@ public class Heap {
         }
         
         public String toString(){
-            return ""+key +" | " + value;
+            return ""+key +" - " + value;
         }
     }
 }
