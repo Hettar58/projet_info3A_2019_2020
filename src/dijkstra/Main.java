@@ -5,6 +5,7 @@
  */
 package dijkstra;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import javax.swing.JFrame;
@@ -14,60 +15,95 @@ import javax.swing.JFrame;
  * @author yt646712
  */
 public class Main extends JFrame{
+    public static Main main;    //lien pour les commandes
     
-    public static final int MAX_RAYON = 50;
-    public static final int MIN_RAYON = 9;
-
-    public static final int POINTS = 1500;
-    public static final int OBSTACLES = 10;
+    public static int POINTS = 1500;
+    public static int OBSTACLES = 0;
     public static final int WIDTH = 1024;
     public static final int HEIGHT = 768;
     public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static final int R = 50;//rayon pour prendre en compte un point dans les calculs
-    public static final int r = 30;
-    public static final int POINTS_ITER = 20;
+    public static int R = 50;                     //distance maximale entre 2 points
+    public static int r = 50;                     //distance maximale pour créer un point dans le raffinement.
+    public static int POINTS_ITER = 20;           //nb de points crées pour 1 pt du PCC dans le raffinement.
     //public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
+    
+    public static final int MAX_RAYON = 50;
+    public static final int MIN_RAYON = 9;
+    public static final int MAX_DELTA = 80;
+    public static final int MIN_DELTA = R + 1;
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;            //graphe tampon
     public static ArrayList<Sommet> graphe_copy;       //copie du graphe d'origine
-    public static ArrayList<Sommet> PCC;                //PCCX
+    public static ArrayList<Sommet> PCC;                //PCC
     Sommet origine;
     Sommet arrivee;
-
+    int iterationCounter;
     //public static Heap graphe;
     RenderPanel UI;
+    CommandUI InterfaceCommande;
 
     
     public Main(){
+        main = this;
         this.setTitle("Dijkstra");
         this.setSize(WIDTH, HEIGHT);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
+        iterationCounter = 0;
+        
+        graphe = new ArrayList<Sommet>();
+        PCC = new ArrayList<Sommet>();
+        obstacles = new ArrayList<Obstacle>();
+        graphe_copy = new ArrayList<Sommet>();
+        
+        UI = new RenderPanel();
+        this.add(UI);
         
         init();
         
-        PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
+
         
+        InterfaceCommande = new CommandUI(this, false);
+        InterfaceCommande.setVisible(true);
+    }
+    
+    public void applyDijktra(){
+        if (iterationCounter != 0){
+            if (r - 10 > 0){
+                r = r - 10;
+
+            }
+            
+            graphe.clear();
+            generateGraphe(1);
+            generateVoisins(graphe);
+            graphe_copy.clear();
+        }
+        
+        PCC = dijkstra(origine, arrivee, graphe, graphe_copy); 
+        System.out.println("Applied Dijkstra on " + graphe_copy.size() + " points / PCC size: "+ PCC.size());
+        
+        UI.repaint();
+        
+        iterationCounter++;
+    }
+    
+    public void reset(){
+        iterationCounter = 0;
         graphe.clear();
-        generateGraphe(1);
-        generateVoisins(graphe);
+        PCC.clear();
         graphe_copy.clear();
-        
-        PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
-        
-        graphe.clear();
-        generateGraphe(1);
-        generateVoisins(graphe);
-        graphe_copy.clear();
-        
-        PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
-        
-        UI.graphe_test = graphe_copy;
-        UI.graphe = graphe_copy;
-        UI.PCC = PCC;
+        obstacles.clear();
+        UI.repaint();
+    }
+    
+    public void quit(){
+        InterfaceCommande.setVisible(false);
+        InterfaceCommande.dispose();
+        System.exit(0);
     }
     
     public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, ArrayList<Sommet> g, ArrayList<Sommet> g_copy){
@@ -100,18 +136,17 @@ public class Main extends JFrame{
     
     public void init(){
         //graphe = new Heap(MAX_POINTS);
-        graphe = new ArrayList<Sommet>();
-        PCC = new ArrayList<Sommet>();
-        obstacles = new ArrayList<Obstacle>();
-        graphe_copy = new ArrayList<Sommet>();
         
+        graphe.clear();
+        PCC.clear();
+        obstacles.clear();
+        graphe_copy.clear();
         
         generateObstacles();
         generateGraphe(0);
         generateVoisins(graphe);
         
-        UI = new RenderPanel();
-        this.add(UI);
+        UI.repaint();
     }
     
     
@@ -246,6 +281,7 @@ public class Main extends JFrame{
         }
         return output;
     }
+    
     /**
      * @param args the command line arguments
      */
