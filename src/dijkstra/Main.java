@@ -25,7 +25,7 @@ public class Main extends JFrame{
     public static final int INFINI = 9999;
     public static int R = 50;                     //distance maximale entre 2 points
     public static int r = 50;                     //distance maximale pour créer un point dans le raffinement.
-    public static int POINTS_ITER = 20;           //nb de points crées pour 1 pt du PCC dans le raffinement.
+    public static int POINTS_ITER = 10;           //nb de points crées pour 1 pt du PCC dans le raffinement.
     //public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
     public static final int MAX_RAYON = 50;
@@ -71,24 +71,28 @@ public class Main extends JFrame{
     }
     
     public void applyDijktra(){
-        if (iterationCounter != 0){
-            if (r - 10 > 0){
-                r = r - 10;
+        if (iterationCounter < 4){
+            if (iterationCounter != 0){
+                if (r - 10 > 0){
+                    r = r - 10;
+                }
+                else{
+                    r = 1;
+                }
 
+                graphe.clear();
+                generateGraphe(1);
+                generateVoisins(graphe);
+                graphe_copy.clear();
             }
-            
-            graphe.clear();
-            generateGraphe(1);
-            generateVoisins(graphe);
-            graphe_copy.clear();
+
+            PCC = dijkstra(origine, arrivee, graphe, graphe_copy); 
+            System.out.println("Applied Dijkstra on " + graphe_copy.size() + " points / PCC size: "+ PCC.size());
+
+            UI.repaint();
+
+            iterationCounter++;
         }
-        
-        PCC = dijkstra(origine, arrivee, graphe, graphe_copy); 
-        System.out.println("Applied Dijkstra on " + graphe_copy.size() + " points / PCC size: "+ PCC.size());
-        
-        UI.repaint();
-        
-        iterationCounter++;
     }
     
     public void reset(){
@@ -156,6 +160,7 @@ public class Main extends JFrame{
         
         Point p_origine = new Point(5, 5);
         origine = new Sommet(p_origine);
+        origine.distance = 0;
         graphe.add(origine);
         
         if (mode == 0){
@@ -266,7 +271,7 @@ public class Main extends JFrame{
                     }
                 }
                 if (mode == 2 && ref != null){    //vérification d'inclusion. A MODIFIER
-                    if (Point.Distance(ref, p) >= r){
+                    if (Point.Distance(ref, p) > r){
                         collide = true;
                     }
                 }

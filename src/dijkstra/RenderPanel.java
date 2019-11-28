@@ -37,7 +37,7 @@ public class RenderPanel extends JPanel{
             o.afficher(g);
         }
         
-        g.setColor(Color.GREEN);
+        g.setColor(Color.orange);
         for (Sommet s : graphe_bg){
             s.pos.afficher(g);
             for (Sommet s2 : s.voisins){
