@@ -28,8 +28,8 @@ public class Main extends JFrame{
     public static int POINTS_ITER = 10;           //nb de points crées pour 1 pt du PCC dans le raffinement.
     //public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
-    public static final int MAX_RAYON = 50;
-    public static final int MIN_RAYON = 9;
+    public static final int MAX_RAYON = 40;
+    public static final int MIN_RAYON = 15;
     public static final int MAX_DELTA = 80;
     public static final int MIN_DELTA = R + 1;
     
@@ -71,19 +71,17 @@ public class Main extends JFrame{
     }
     
     public void applyDijktra(){
-        if (iterationCounter < 4){
+        if (iterationCounter < 3){
             if (iterationCounter != 0){
                 if (r - 10 > 0){
                     r = r - 10;
-                }
-                else{
-                    r = 1;
                 }
 
                 graphe.clear();
                 generateGraphe(1);
                 generateVoisins(graphe);
                 graphe_copy.clear();
+               
             }
 
             PCC = dijkstra(origine, arrivee, graphe, graphe_copy); 
@@ -236,9 +234,14 @@ public class Main extends JFrame{
                 Point ex2 = null;
                 
                 //pour faciliter les calculs. implique que ext1 = HG et ext2 = BD
+                double dx, dy;
                 do{
                     ex2 = generatePoint(0,null);
-                }while (ex2.getX() <= ex1.getX() || ex2.getY() <= ex1.getY());
+                    dx = Math.abs(ex2.getX() - ex1.getY());    //LARGEUR
+                    dy = Math.abs(ex2.getY() - ex1.getY());    //HAUTEUR
+                    System.out.println(dx);
+                    System.out.println(dy);
+                }while (ex2.getX() <= ex1.getX()|| ex2.getY() <= ex1.getY() || dx < MIN_DELTA || dy < MIN_DELTA);
                 
                 Rectangle r = new Rectangle(ex1, ex2);
                 obstacles.add(r);

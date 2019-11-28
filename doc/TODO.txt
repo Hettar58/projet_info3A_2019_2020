@@ -1,13 +1,10 @@
 
-Implémenter dijkstra        FAIT
 Implémenter le 2DTree (KD Tree)     A FAIRE
-Implémenter le raffinement itératif     FAIT
-Remplacer l'ArrayList de points par le Heap     PRESQUE FAIT
+HEAP A FAIRE
 
 corriger bug traversée d'obstacles ==> générateur d'obstacles a modifier
 Fonction updateNode et clear a faire pour finr le tas.
 
-AJOUTER INTERFACE GRAPHIQUE SIMPLE
 
 +
 Complexité algo sur papier log-log      A FAIRE

@@ -57,7 +57,7 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.BLUE);
-        for (int i = 0; i < PCC.size() - 2; i++){
+        for (int i = 0; i < PCC.size() - 1; i++){
             g.drawLine(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), PCC.get(i + 1).pos.getX(), PCC.get(i + 1).pos.getY());
             g.fillOval(PCC.get(i).pos.getX(), PCC.get(i).pos.getY(), 4, 4);
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
