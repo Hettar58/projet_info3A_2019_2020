@@ -1,10 +1,2 @@
-
 Implémenter le 2DTree (KD Tree)     A FAIRE
-HEAP A FAIRE
-
-corriger bug traversée d'obstacles ==> générateur d'obstacles a modifier
-Fonction updateNode et clear a faire pour finr le tas.
-
-
-+
 Complexité algo sur papier log-log      A FAIRE

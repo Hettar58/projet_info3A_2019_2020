@@ -22,11 +22,12 @@ public class Heap {
         tas.addObject(new Point(7, 0), 7);
         tas.addObject(new Point(4, 0), 4);
         
-        System.out.println(tas.filsGauche(2));
-        System.out.println(tas.filsDroit(2));
+        System.out.println(tas.filsGauche(4));
+        System.out.println(tas.filsDroit(4));
         System.out.println(tas.extractRoot().toString());
         System.out.println(tab[0].toString());
         
+        tas.updateKeyFromKey(2, 3);
         System.out.println();
         System.out.println(tas.toString());
         System.out.println(tas.size);
@@ -83,16 +84,16 @@ public class Heap {
             swap(index, 2 * index + 1);
             downHeap(2 * index + 1);
         }
+        System.out.println("downHeap");
     }
     
     private void upHeap(int index){
         //System.out.println(index / 2);
-            if (pere(index) > tab[index].getKey()){
-                swap(index, index / 2);
-                upHeap(index / 2);
-                System.out.println("upHeap");
-            }
-      
+        if (pere(index) > tab[index].getKey()){
+            swap(index, index / 2);
+            upHeap(index / 2);
+            System.out.println("upHeap");
+        }
     }
     
     private void swap(int index_n1, int index_n2){
@@ -122,11 +123,50 @@ public class Heap {
     }
     
     public void clear(){
-        
+        for(int i = 0; i < capacity; i++){
+            tab[i] = null;
+        }
     }
     
-    public void updateKey(int index, int newKey){
-        
+    public void updateKeyFromKey(int oldKey, int newKey){
+        int index = getIndexFromKey(oldKey);
+        System.out.println(index);
+        tab[index].key = newKey;
+        if (pere(index) > newKey){
+            upHeap(index);
+            System.out.println("update upHeap");
+        }
+        else if(filsGauche(index) < newKey || filsDroit(index) < newKey){
+            downHeap(index);
+            System.out.println("update downHeap");
+        }
+    }
+    
+    public void updateKeyFromValue(Object val, int newKey){
+        int index = getIndexFromValue(val);
+        updateKeyFromKey(index, newKey);
+    }
+    
+    public int getIndexFromKey(int key){
+        int output = -1;
+        for (int i = 0; i < size; i++){
+            if (tab[i] != null){
+                if (tab[i].key == key){
+                    output = i;
+                }
+            }
+        }
+        return output;
+    }
+    
+    public int getIndexFromValue(Object val){
+        int output = -1;
+        for (int i = 0; i < size; i++){
+            if (tab[i].value == val){
+                output = i;
+            }
+        }
+        return output;
     }
     
     public int getSize(){

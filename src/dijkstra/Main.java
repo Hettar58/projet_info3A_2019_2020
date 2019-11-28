@@ -26,12 +26,11 @@ public class Main extends JFrame{
     public static int R = 50;                     //distance maximale entre 2 points
     public static int r = 50;                     //distance maximale pour créer un point dans le raffinement.
     public static int POINTS_ITER = 10;           //nb de points crées pour 1 pt du PCC dans le raffinement.
-    //public static final double SAVE_THRESOLD = 1.05;   //seuil de sauvegarde
     
     public static final int MAX_RAYON = 40;
     public static final int MIN_RAYON = 15;
     public static final int MAX_DELTA = 80;
-    public static final int MIN_DELTA = R + 1;
+    public static final int MIN_DELTA = 60;
     
     public static ArrayList<Obstacle> obstacles;
     public static ArrayList<Sommet> graphe;            //graphe tampon
@@ -64,8 +63,6 @@ public class Main extends JFrame{
         
         init();
         
-
-        
         InterfaceCommande = new CommandUI(this, false);
         InterfaceCommande.setVisible(true);
     }
@@ -81,9 +78,7 @@ public class Main extends JFrame{
                 generateGraphe(1);
                 generateVoisins(graphe);
                 graphe_copy.clear();
-               
             }
-
             PCC = dijkstra(origine, arrivee, graphe, graphe_copy); 
             System.out.println("Applied Dijkstra on " + graphe_copy.size() + " points / PCC size: "+ PCC.size());
 
@@ -123,8 +118,7 @@ public class Main extends JFrame{
                     }
                 }
                 g_copy.add(s1);
-                g.remove(s1);
-                
+                g.remove(s1);   
             }
         }while(s1 != fin && s1 != null);
 
@@ -150,7 +144,6 @@ public class Main extends JFrame{
         
         UI.repaint();
     }
-    
     
     //mode == 0 -> graphe généré sans prise en compte du PCC
     //mode == 1 -> graphe généré avec prise en compte de r et du PCC.
@@ -218,8 +211,6 @@ public class Main extends JFrame{
         return output;
     }
     
-    
-    
     public void generateObstacles(){
         for (int i = 0; i < OBSTACLES; i++){
             int type = (int)(2*Math.random());
@@ -231,17 +222,7 @@ public class Main extends JFrame{
             }
             else{   //rectangle
                 Point ex1  = generatePoint(0,null);
-                Point ex2 = null;
-                
-                //pour faciliter les calculs. implique que ext1 = HG et ext2 = BD
-                double dx, dy;
-                do{
-                    ex2 = generatePoint(0,null);
-                    dx = Math.abs(ex2.getX() - ex1.getY());    //LARGEUR
-                    dy = Math.abs(ex2.getY() - ex1.getY());    //HAUTEUR
-                    System.out.println(dx);
-                    System.out.println(dy);
-                }while (ex2.getX() <= ex1.getX()|| ex2.getY() <= ex1.getY() || dx < MIN_DELTA || dy < MIN_DELTA);
+                Point ex2 = generatePoint(4, ex1);
                 
                 Rectangle r = new Rectangle(ex1, ex2);
                 obstacles.add(r);
@@ -252,10 +233,17 @@ public class Main extends JFrame{
     //mode == 0:    pas de vérification de collision.
     //mode == 1:    vérification de collision
     //mode == 2:    vérification de collision ET inclusion dans le rayon.
+    //mode == 4:    spécifique au rectangle. force la création d'un pt inclus dans delta et > a la position de ref.
     public Point generatePoint(int mode, Point ref){
         if (mode == 0){
             int x = (int)(1+(WIDTH - 1) * Math.random());
             int y = (int)(1+(HEIGHT -1) * Math.random());
+            Point p = new Point(x, y);
+            return p;
+        }
+        else if(mode == 4){
+            int x = (int)(ref.getX() + MIN_DELTA+ (MAX_DELTA + 1) * Math.random());
+            int y = (int)(ref.getY() + MIN_DELTA+ (MAX_DELTA + 1) * Math.random());
             Point p = new Point(x, y);
             return p;
         }
