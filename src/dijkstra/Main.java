@@ -19,13 +19,14 @@ public class Main extends JFrame{
     
     public static int POINTS = 1500;
     public static int OBSTACLES = 0;
-    public static final int WIDTH = 1024;
-    public static final int HEIGHT = 768;
-    public static final int MARGIN = 20;
+    public static final int WIDTH = 800;
+    public static final int HEIGHT = 600;
+    //public static final int MARGIN = 20;
     public static final int INFINI = 9999;
     public static int R = 50;                     //distance maximale entre 2 points
-    public static int r = 50;                     //distance maximale pour créer un point dans le raffinement.
-    public static int POINTS_ITER = 10;           //nb de points crées pour 1 pt du PCC dans le raffinement.
+    public static double SAVE_THRESOLD = 1.01;    //seuil de différence pour lequel un point est éclaté.
+    public static double r = 20;                  //rayon dans lequel des nouv
+    public static int POINTS_ITER = 5;           //nb de points crées pour 1 pt du PCC dans le raffinement.
     
     public static final int MAX_RAYON = 40;
     public static final int MIN_RAYON = 15;
@@ -57,7 +58,6 @@ public class Main extends JFrame{
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
         graphe_copy = new ArrayList<Sommet>();
-        
         UI = new RenderPanel();
         this.add(UI);
         
@@ -67,29 +67,41 @@ public class Main extends JFrame{
         InterfaceCommande.setVisible(true);
     }
     
+    
     public void applyDijktra(){
-        if (iterationCounter < 3){
+        if (iterationCounter < 5){
             if (iterationCounter != 0){
-                if (r - 10 > 0){
-                    r = r - 10;
+                switch(iterationCounter){
+                    case 1: SAVE_THRESOLD = 1.01; break;
+                    case 2: SAVE_THRESOLD = 1.001; break;
+                    case 3: SAVE_THRESOLD = 1.0001; break;
+                    case 4: SAVE_THRESOLD = 1.0; break;
                 }
-
+                
+                
                 graphe.clear();
                 generateGraphe(1);
-                generateVoisins(graphe);
                 graphe_copy.clear();
+                generateVoisins(graphe);
+                
+                
+                System.out.println(SAVE_THRESOLD);
             }
-            PCC = dijkstra(origine, arrivee, graphe, graphe_copy); 
+            
+            PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
+            
             System.out.println("Applied Dijkstra on " + graphe_copy.size() + " points / PCC size: "+ PCC.size());
-
             UI.repaint();
 
             iterationCounter++;
         }
     }
     
+    
     public void reset(){
         iterationCounter = 0;
+        R = 50;
+        SAVE_THRESOLD = 1.01;
         graphe.clear();
         PCC.clear();
         graphe_copy.clear();
@@ -117,6 +129,8 @@ public class Main extends JFrame{
                         s.pred = s1;
                     }
                 }
+                s1.distance_origine = Sommet.Distance(origine, s1);
+                s1.distance_arrivee = Sommet.Distance(arrivee, s1);
                 g_copy.add(s1);
                 g.remove(s1);   
             }
@@ -146,7 +160,7 @@ public class Main extends JFrame{
     }
     
     //mode == 0 -> graphe généré sans prise en compte du PCC
-    //mode == 1 -> graphe généré avec prise en compte de r et du PCC.
+    //mode == 1 -> graphe généré avec prise en compte de SAVE_THRESOLD
     public void generateGraphe(int mode){
         
         Point p_origine = new Point(5, 5);
@@ -163,20 +177,31 @@ public class Main extends JFrame{
             }
         } 
         else if (mode == 1){
-            for(int i=0; i<= PCC.size()-1; i++){
-                for(int j=0; j<= POINTS_ITER;j++){
-                    Point x =PCC.get(i).pos;
-                    Sommet s = new Sommet(generatePoint(2, x));
-                    s.distance = INFINI;
+            for (int i = 1; i < graphe_copy.size() - 1; i++){
+                Sommet s = graphe_copy.get(i);
+                double d = (s.distance_origine + s.distance_arrivee) / Sommet.Distance(origine, arrivee);
+                System.out.println(d);
+                if (d > SAVE_THRESOLD){
+                    graphe_copy.remove(i);
+                }
+                else{
                     graphe.add(s);
-                }   
+                    for (int j = 0; j < POINTS_ITER; j++){
+                        Point p = generatePoint(2, s.pos);
+                        Sommet s2 = new Sommet(p);
+                        s2.distance = INFINI;
+                        graphe.add(new Sommet(s2));
+                    }
+                }
+                
             }
         }
         
-        Point p_arrivee = new Point(1019, 730);
+        Point p_arrivee = new Point(780, 580);
         arrivee = new Sommet(p_arrivee);
         arrivee.distance = INFINI;
         graphe.add(arrivee);
+        
         
     }
     
@@ -253,8 +278,8 @@ public class Main extends JFrame{
             do{
                 collide = false;
                 p = null;
-                int x = (int)(1+(WIDTH - MARGIN) * Math.random());
-                int y = (int)(1+(HEIGHT - MARGIN) * Math.random());
+                int x = (int)(1+(WIDTH) * Math.random());
+                int y = (int)(1+(HEIGHT) * Math.random());
                 p = new Point(x, y);
                 for (int i = 0; i < obstacles.size(); i++){
                     if (obstacles.get(i).collision(new Sommet(p)) == true){

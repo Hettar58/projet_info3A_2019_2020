@@ -14,14 +14,14 @@ import java.util.ArrayList;
  */
 public class Sommet {
 
-    static Object get(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
     public Point pos;
     public ArrayList<Sommet> voisins;
     public ArrayList<Double> arcs;
     public Sommet pred;
     public double distance;
+    public double distance_origine;
+    public double distance_arrivee;
     
     public Sommet(Point p){
         this.pos = p;
