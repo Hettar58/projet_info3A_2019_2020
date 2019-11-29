@@ -15,10 +15,9 @@ import javax.swing.*;
  */
 public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
-    ArrayList<Sommet> points;                 //a voir avec le HEAP
     ArrayList<Sommet> PCC;
-    ArrayList<Sommet> graphe;
-    ArrayList<Sommet> graphe_bg;
+    Heap graphe;
+    Heap graphe_bg;
 
     
     public RenderPanel(){
@@ -38,7 +37,8 @@ public class RenderPanel extends JPanel{
         }
         
         g.setColor(Color.orange);
-        for (Sommet s : graphe_bg){
+        for (int i = 0; i < graphe.getSize(); i++){
+            Sommet s = (Sommet)(graphe.getValueAt(i));
             s.pos.afficher(g);
             for (Sommet s2 : s.voisins){
                 g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
@@ -48,7 +48,8 @@ public class RenderPanel extends JPanel{
         
         
         g.setColor(Color.RED);
-        for (Sommet s : graphe){
+        for (int i = 0; i < graphe.getSize(); i++){
+            Sommet s = (Sommet)(graphe.getValueAt(i));
             s.pos.afficher(g);
             for (Sommet s2 : s.voisins){
                 g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
@@ -63,7 +64,7 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
 
-        System.out.println("Render: " + graphe.size() + " pts (graphe) | " + graphe_bg.size() + " pts (copy) | "+ obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
+        System.out.println("Render: " + graphe.getSize() + " pts (graphe) | " + graphe_bg.getSize() + " pts (copy) | "+ obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
     }
     
     @Override
