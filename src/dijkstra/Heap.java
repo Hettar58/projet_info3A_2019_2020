@@ -11,7 +11,7 @@ package dijkstra;
  */
 public class Heap {
     
-       public static void main(String[] args){
+    /*public static void main(String[] args){
            
         int taille = 15;
         Heap tas = new Heap(taille);
@@ -31,7 +31,7 @@ public class Heap {
         System.out.println();
         System.out.println(tas.toString());
         System.out.println(tas.size);
-    }
+    }*/
         
         
     static Node[] tab;
@@ -44,7 +44,7 @@ public class Heap {
         this.size = 0;
     }
     
-    public int pere(int index){
+    public double pere(int index){
         int v = index / 2;
         if (v > 0 && v <= capacity && tab[v] != null){
             return tab[index / 2].key;
@@ -54,7 +54,7 @@ public class Heap {
         }
     }
     
-    public int filsGauche(int index){
+    public double filsGauche(int index){
         int v = 2 * index;
         if (v >= 0 && v < capacity && tab[v] != null){
             return tab[2 * index].key;
@@ -65,7 +65,7 @@ public class Heap {
     }
     
     
-    public int filsDroit(int index){
+    public double filsDroit(int index){
         int v = 2 * index + 1;
         if (v >= 0 && v < capacity && tab[v] != null){
             return tab[2 * index + 1].key;
@@ -76,13 +76,15 @@ public class Heap {
     }
     
     private void downHeap(int index){
-        if (filsGauche(index) < tab[index].getKey()){
-            swap(index, 2 * index);
-            downHeap(2 * index);
-        }
-        else if(filsDroit(index) < tab[index].getKey()){
-            swap(index, 2 * index + 1);
-            downHeap(2 * index + 1);
+        if (tab[index] != null){
+            if (filsGauche(index) < tab[index].getKey()){
+                swap(index, 2 * index);
+                downHeap(2 * index);
+            }
+            else if(filsDroit(index) < tab[index].getKey()){
+                swap(index, 2 * index + 1);
+                downHeap(2 * index + 1);
+            }
         }
         System.out.println("downHeap");
     }
@@ -112,7 +114,7 @@ public class Heap {
         return output;
     }
     
-    public void addObject(Object obj, int key){
+    public void addObject(Object obj, double key){
         Node n = new Node(key, obj);
         if (size < capacity){
             tab[size] = n;
@@ -128,7 +130,7 @@ public class Heap {
         }
     }
     
-    public void updateKeyFromKey(int oldKey, int newKey){
+    public void updateKeyFromKey(double oldKey, double newKey){
         int index = getIndexFromKey(oldKey);
         System.out.println(index);
         tab[index].key = newKey;
@@ -142,12 +144,12 @@ public class Heap {
         }
     }
     
-    public void updateKeyFromValue(Object val, int newKey){
+    public void updateKeyFromValue(Object val, double newKey){
         int index = getIndexFromValue(val);
         updateKeyFromKey(index, newKey);
     }
     
-    public int getIndexFromKey(int key){
+    public int getIndexFromKey(double key){
         int output = -1;
         for (int i = 0; i < size; i++){
             if (tab[i] != null){
@@ -173,10 +175,17 @@ public class Heap {
         return size;
     }
     
+    public Object getValueAt(int index){
+        return tab[index].value;
+    }
+    
+    public double getKeyAt(int index){
+        return tab[index].key;
+    }
     
     public String toString(){
         String s = "";
-        for (int i = 0; i <= size; i++){
+        for (int i = 0; i < size; i++){
             if (tab[i] != null){
                 s += "" + i + " || " +tab[i].toString() + "\n";
             }
@@ -185,19 +194,19 @@ public class Heap {
     }
     
     private class Node{
-        int key;
+        double key;
         Object value;
 
-        public Node(int key, Object value) {
+        public Node(double key, Object value) {
             this.key = key;
             this.value = value;
         }
 
-        public int getKey() {
+        public double getKey() {
             return key;
         }
 
-        public void setKey(int key) {
+        public void setKey(double key) {
             this.key = key;
         }
 
