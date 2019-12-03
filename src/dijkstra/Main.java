@@ -16,13 +16,13 @@ import javax.swing.JFrame;
 public class Main extends JFrame{
     public static Main main;    //lien pour les commandes
     
-    public static int POINTS = 1500;
+    public static int POINTS = 15;
     public static int OBSTACLES = 0;
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     //public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static int R = 50;                     //distance maximale entre 2 points
+    public static int R = 500;                     //distance maximale entre 2 points
     public static double SAVE_THRESOLD = 1.01;    //seuil de différence pour lequel un point est éclaté.
     public static double r = 20;                  //rayon dans lequel des nouv
     public static int POINTS_ITER = 5;           //nb de points crées pour 1 pt du PCC dans le raffinement.
@@ -159,10 +159,7 @@ public class Main extends JFrame{
         generateGraphe(0);
         generateVoisins(graphe);
         
-        System.out.println(graphe.getSize());
         System.out.println(graphe.toString());
-        System.out.println(graphe.getValueAt(0));
-        System.out.println(graphe.getKeyAt(0));
         UI.repaint();
     }
     
