@@ -52,20 +52,22 @@ public class Heap {
     }
     
     private void downHeap(int index){
-        if (tab[index] != null){
-            if (filsGauche(index) < tab[index].getKey()){
-                System.out.println("FG");
-                swap(index, 2 * index);
-                downHeap(2 * index);
-                
+        if (index < size){
+            if (tab[index] != null){
+                System.out.println("downHeap");
+                if (filsGauche(index) < tab[index].getKey()){
+                    System.out.println("FG");
+                    swap(index, 2 * index);
+                    downHeap(2 * index);
+
+                }
+                else if(filsDroit(index) <= tab[index].getKey()){
+                    System.out.println("FD");
+                    swap(index, 2 * index + 1);
+                    downHeap(2 * index + 1);
+
+                }
             }
-            else if(filsDroit(index) <= tab[index].getKey()){
-                System.out.println("FD");
-                swap(index, 2 * index + 1);
-                downHeap(2 * index + 1);
-                
-            }
-            System.out.println("downHeap");
         }
     }
     
@@ -89,8 +91,8 @@ public class Heap {
     }
     
     public Object extractRoot(){
-        System.out.println(tab[0].getValue());
         Object output = tab[0].getValue();
+        System.out.println(output);
 
         //première valeur différente de null à la fin du tableau.
         tab[0] = tab[size - 1];
