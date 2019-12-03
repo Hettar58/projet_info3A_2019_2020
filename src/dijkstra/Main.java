@@ -16,13 +16,13 @@ import javax.swing.JFrame;
 public class Main extends JFrame{
     public static Main main;    //lien pour les commandes
     
-    public static int POINTS = 15;
+    public static int POINTS = 1500;
     public static int OBSTACLES = 0;
     public static final int WIDTH = 800;
     public static final int HEIGHT = 600;
     //public static final int MARGIN = 20;
     public static final int INFINI = 9999;
-    public static int R = 500;                     //distance maximale entre 2 points
+    public static int R = 50;                     //distance maximale entre 2 points
     public static double SAVE_THRESOLD = 1.01;    //seuil de différence pour lequel un point est éclaté.
     public static double r = 20;                  //rayon dans lequel des nouv
     public static int POINTS_ITER = 5;           //nb de points crées pour 1 pt du PCC dans le raffinement.
@@ -80,7 +80,7 @@ public class Main extends JFrame{
                     case 4: SAVE_THRESOLD = 1.0; break;
                 }
                 
-                
+                System.out.println(graphe_copy.toString());
                 graphe.clear();
                 generateGraphe(1);
                 graphe_copy.clear();
@@ -120,22 +120,31 @@ public class Main extends JFrame{
     public ArrayList<Sommet> dijkstra(Sommet debut, Sommet fin, Heap g, Heap g_copy){
         ArrayList<Sommet> output = new ArrayList<Sommet>();
         Sommet s1 = debut;
+        Object tmp;
         do{
-            s1 = (Sommet)(g.extractRoot());
-            if (s1 != null){
+            //System.out.println();
+            //System.out.println(g.toString());
+            tmp = g.getRoot();
+            if (tmp != null){
+                s1 = (Sommet)(tmp);
+                
+                System.out.println(s1);
                 for (int i = 0; i <= s1.voisins.size() - 1; i++){
                     double d = s1.getArc(i);
                     Sommet s = s1.getVoisin(i);
                     if (s.distance > s1.distance + d){
                         s.distance = s1.getDistance() + d;
                         s.pred = s1;
+                        g.updateKeyFromValue(s, s.distance);
                     }
                 }
+                g.refresh();
                 s1.distance_origine = Sommet.Distance(origine, s1);
                 s1.distance_arrivee = Sommet.Distance(arrivee, s1);
                 g_copy.addObject(s1, s1.distance);  
+                g.removeRoot();
             }
-        }while(s1 != fin && s1 != null);
+        }while(s1 != fin && tmp != null);
 
         Sommet s = arrivee;
         while (s != null){
@@ -181,7 +190,8 @@ public class Main extends JFrame{
             }
         } 
         else if (mode == 1){
-            for (int i = 1; i < graphe_copy.getSize() - 1; i++){
+            for (int i = 1; i < graphe_copy.getSize() - 2; i++){
+                System.out.println(graphe_copy.getSize());
                 Sommet s = (Sommet)(graphe_copy.getValueAt(i));
                 double d = (s.distance_origine + s.distance_arrivee) / Sommet.Distance(origine, arrivee);
                 System.out.println(d);

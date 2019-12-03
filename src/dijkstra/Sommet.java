@@ -37,9 +37,20 @@ public class Sommet {
         this.distance = p.distance;
     }
     
+    public void finalize(){
+        for (Sommet s : voisins){
+           s.deleteVoisin(this, this.distance);
+        }
+    }
+    
     public void addVoisin(Sommet s, double d){
         voisins.add(s);
         arcs.add(d);
+    }
+    
+    public void deleteVoisin(Sommet s, double d){
+        voisins.remove(s);
+        arcs.remove(d);
     }
     
     public Sommet getVoisin(int index){

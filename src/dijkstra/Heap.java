@@ -36,7 +36,7 @@ public class Heap {
             return tab[2 * index].key;
         }
         else{
-            return Main.INFINI;
+            return Main.INFINI+1;
         }
     }
     
@@ -47,22 +47,20 @@ public class Heap {
             return tab[2 * index + 1].key;
         }
         else{
-            return Main.INFINI;
+            return Main.INFINI+1;
         }
     }
     
     private void downHeap(int index){
         if (index < size){
             if (tab[index] != null){
-                System.out.println("downHeap");
+                
                 if (filsGauche(index) < tab[index].getKey()){
-                    System.out.println("FG");
                     swap(index, 2 * index);
                     downHeap(2 * index);
 
                 }
-                else if(filsDroit(index) <= tab[index].getKey()){
-                    System.out.println("FD");
+                else if(filsDroit(index) < tab[index].getKey()){
                     swap(index, 2 * index + 1);
                     downHeap(2 * index + 1);
 
@@ -72,33 +70,40 @@ public class Heap {
     }
     
     private void upHeap(int index){
-        //System.out.println(index / 2);
-        if (pere(index) > tab[index].getKey()){
-            swap(index, index / 2);
-            upHeap(index / 2);
-            System.out.println("upHeap");
+        if (index < size){
+            if (pere(index) > tab[index].getKey()){
+                swap(index, index / 2);
+                upHeap(index / 2);
+            }
         }
     }
     
     private void swap(int index_n1, int index_n2){
         if (index_n1 < size && index_n2 < size){
-            if (tab[index_n1] != null && tab[index_n2] != null){
+           
                 Node temp = tab[index_n2];
                 tab[index_n2] = tab[index_n1];
                 tab[index_n1] = temp;
-            }
+            
         }
     }
     
-    public Object extractRoot(){
-        Object output = tab[0].getValue();
-        System.out.println(output);
-
+    public void removeRoot(){
+       
         //première valeur différente de null à la fin du tableau.
-        tab[0] = tab[size - 1];
-        tab[size - 1] = null;
+        swap(0, size -1);
+        tab[size-1] = null;
         downHeap(0);
-        return output;
+        size--;
+    }
+    
+    public Object getRoot(){
+        if (tab[0] != null){
+            return tab[0].value;
+        }
+        else{
+            return null;
+        }
     }
     
     public void addObject(Object obj, double key){
@@ -120,21 +125,46 @@ public class Heap {
     
     public void updateKeyFromKey(double oldKey, double newKey){
         int index = getIndexFromKey(oldKey);
-        System.out.println(index);
         tab[index].key = newKey;
-        if (pere(index) > newKey){
+        if (pere(index) >= newKey){
             upHeap(index);
-            System.out.println("update upHeap");
         }
         else if(filsGauche(index) < newKey || filsDroit(index) < newKey){
             downHeap(index);
-            System.out.println("update downHeap");
         }
     }
     
     public void updateKeyFromValue(Object val, double newKey){
         int index = getIndexFromValue(val);
-        updateKeyFromKey(index, newKey);
+        //System.out.println(index);
+        if (index != -1){
+            tab[index].key = newKey;
+            if (pere(index) > newKey){
+                upHeap(index);
+            }
+            if(filsGauche(index) < newKey || filsDroit(index) < newKey){
+                downHeap(index);
+            }
+        }
+        else{
+            System.out.println("Erreur: valeur introuvable");
+        }
+    }
+    
+    public void refresh(){
+        //tri par selection
+        for (int i = 0; i < size; i++){
+            int min = i;
+            for (int j = i+1; j < size; j++){
+                if (tab[j].key < tab[min].key){
+                    min = j;
+                }
+            }
+            
+            if (min != i){
+                swap(i, min);
+            }
+        }
     }
     
     public int getIndexFromKey(double key){
@@ -152,9 +182,10 @@ public class Heap {
     public int getIndexFromValue(Object val){
         int output = -1;
         for (int i = 0; i < size; i++){
-            if (tab[i].value == val){
-                output = i;
-            }
+                if (tab[i].value == val){
+                    output = i;
+                }
+            
         }
         return output;
     }
@@ -163,6 +194,7 @@ public class Heap {
         int index = getIndexFromValue(val);
         tab[index] = tab[size];
         tab[size] = null;
+        size--;
         downHeap(index);
     }
     
