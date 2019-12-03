@@ -10,30 +10,6 @@ package dijkstra;
  * @author yt646712
  */
 public class Heap {
-    
-    /*public static void main(String[] args){
-           
-        int taille = 15;
-        Heap tas = new Heap(taille);
-        tas.addObject(new Point(1, 0), 1);
-        tas.addObject(new Point(5, 0), 5);
-        tas.addObject(new Point(2, 0), 2);
-        tas.addObject(new Point(3, 0), 3);
-        tas.addObject(new Point(7, 0), 7);
-        tas.addObject(new Point(4, 0), 4);
-        
-        System.out.println(tas.filsGauche(4));
-        System.out.println(tas.filsDroit(4));
-        System.out.println(tas.extractRoot().toString());
-        System.out.println(tab[0].toString());
-        
-        tas.updateKeyFromKey(2, 3);
-        System.out.println();
-        System.out.println(tas.toString());
-        System.out.println(tas.size);
-    }*/
-        
-        
     static Node[] tab;
     int capacity;   //capacité maximum
     int size;       //remplissage actuel
@@ -125,9 +101,10 @@ public class Heap {
     }
     
     public void clear(){
-        for(int i = 0; i < capacity; i++){
+        for(int i = 0; i < capacity -1; i++){
             tab[i] = null;
         }
+        this.size = 0;
     }
     
     public void updateKeyFromKey(double oldKey, double newKey){
@@ -171,12 +148,22 @@ public class Heap {
         return output;
     }
     
+    public void removeFromValue(Object val){
+        int index = getIndexFromValue(val);
+        
+    }
+    
     public int getSize(){
         return size;
     }
     
     public Object getValueAt(int index){
-        return tab[index].value;
+        if (index < size){
+            return tab[index].value;
+        }
+        else{
+            return null;
+        }
     }
     
     public double getKeyAt(int index){

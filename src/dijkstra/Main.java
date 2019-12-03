@@ -33,15 +33,14 @@ public class Main extends JFrame{
     public static final int MIN_DELTA = 60;
     
     public static ArrayList<Obstacle> obstacles;
-    //public static ArrayList<Sommet> graphe;            //graphe tampon
-    //public static ArrayList<Sommet> graphe_copy;       //copie du graphe d'origine
-    public static ArrayList<Sommet> PCC;                //PCC
     public static Heap graphe;
     public static Heap graphe_copy;
+    public static ArrayList<Sommet> PCC;                //PCC
+    
     Sommet origine;
     Sommet arrivee;
     int iterationCounter;
-    //public static Heap graphe;
+    
     RenderPanel UI;
     CommandUI InterfaceCommande;
 
@@ -59,7 +58,8 @@ public class Main extends JFrame{
         graphe = new Heap(POINTS);
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
-        graphe_copy = new ArrayList<Sommet>();
+        graphe_copy = new Heap(POINTS);
+        
         UI = new RenderPanel();
         this.add(UI);
         
@@ -92,7 +92,7 @@ public class Main extends JFrame{
             
             PCC = dijkstra(origine, arrivee, graphe, graphe_copy);
             
-            System.out.println("Applied Dijkstra on " + graphe_copy.size() + " points / PCC size: "+ PCC.size());
+            System.out.println("Applied Dijkstra on " + graphe_copy.getSize() + " points / PCC size: "+ PCC.size());
             UI.repaint();
 
             iterationCounter++;
@@ -121,7 +121,6 @@ public class Main extends JFrame{
         ArrayList<Sommet> output = new ArrayList<Sommet>();
         Sommet s1 = debut;
         do{
-            //s1 = find(g, 0);
             s1 = (Sommet)(g.extractRoot());
             if (s1 != null){
                 for (int i = 0; i <= s1.voisins.size() - 1; i++){
@@ -134,8 +133,7 @@ public class Main extends JFrame{
                 }
                 s1.distance_origine = Sommet.Distance(origine, s1);
                 s1.distance_arrivee = Sommet.Distance(arrivee, s1);
-                g_copy.add(s1);
-                g.remove(s1);   
+                g_copy.addObject(s1, s1.distance);  
             }
         }while(s1 != fin && s1 != null);
 
@@ -148,12 +146,14 @@ public class Main extends JFrame{
     }
     
     public void init(){
-        //graphe = new Heap(MAX_POINTS);
         
         graphe.clear();
+        graphe_copy.clear();
+        graphe_copy = new Heap(POINTS);
+        graphe = new Heap(POINTS);
         PCC.clear();
         obstacles.clear();
-        graphe_copy.clear();
+        
         
         generateObstacles();
         generateGraphe(0);
@@ -184,20 +184,20 @@ public class Main extends JFrame{
             }
         } 
         else if (mode == 1){
-            for (int i = 1; i < graphe_copy.size() - 1; i++){
-                Sommet s = graphe_copy.get(i);
+            for (int i = 1; i < graphe_copy.getSize() - 1; i++){
+                Sommet s = (Sommet)(graphe_copy.getValueAt(i));
                 double d = (s.distance_origine + s.distance_arrivee) / Sommet.Distance(origine, arrivee);
                 System.out.println(d);
                 if (d > SAVE_THRESOLD){
-                    graphe_copy.remove(i);
+                    graphe_copy.removeFromValue(s);
                 }
                 else{
-                    graphe.add(s);
+                    graphe.addObject(s, s.distance);
                     for (int j = 0; j < POINTS_ITER; j++){
                         Point p = generatePoint(2, s.pos);
                         Sommet s2 = new Sommet(p);
                         s2.distance = INFINI;
-                        graphe.add(new Sommet(s2));
+                        graphe.addObject(s2, s2.distance);
                     }
                 }
                 
