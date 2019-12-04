@@ -146,9 +146,6 @@ public class Heap {
                 downHeap(index);
             }
         }
-        else{
-            System.out.println("Erreur: valeur introuvable");
-        }
     }
     
     public void refresh(){
@@ -208,7 +205,12 @@ public class Heap {
     }
     
     public Object getValueAt(int index){
-        return tab[index].value;
+        if (tab[index] != null){
+            return tab[index].value;
+        }
+        else{
+            return null;
+        }
     }
     
     public double getKeyAt(int index){
@@ -223,14 +225,6 @@ public class Heap {
             }
         }
         return s;
-    }
-    
-    public static void CopyHeap(Heap source, Heap destination){
-        for (int i =0; i < source.getSize(); i++ ){
-            Object obj = source.getValueAt(i);
-            double val = source.getKeyAt(i);
-            destination.addObject(obj, val);
-        }
     }
     
     private class Node{

@@ -73,6 +73,7 @@ public class Main extends JFrame{
     
     public void applyDijktra(){
         if (iterationCounter < 5){
+            System.out.println();
             if (iterationCounter != 0){
                 switch(iterationCounter){
                     case 1: seuilSauvegarde = 1.01; break;
@@ -83,10 +84,8 @@ public class Main extends JFrame{
                 
                 graphe.clear();
                 generateGraphe(1);
-                System.out.println("post generator");
                 graphe_copy.clear();
                 generateVoisins(graphe);
-                
                 
             }
             
@@ -171,7 +170,7 @@ public class Main extends JFrame{
     }
     
     //mode == 0 -> graphe généré sans prise en compte du PCC
-    //mode == 1 -> graphe généré avec prise en compte de SAVE_THRESOLD
+    //mode == 1 -> graphe généré avec prise en compte du seuil de sauvegarde
     public void generateGraphe(int mode){
         
         Point p_origine = new Point(5, 5);
@@ -190,10 +189,8 @@ public class Main extends JFrame{
         } 
         else if (mode == 1){
             for (int i = 0; i < graphe_copy.size() - 2; i++){
-                System.out.println(graphe_copy.get(i).toString());
                 Sommet s = (Sommet)(graphe_copy.get(i));
                 double d = (s.distance_origine + s.distance_arrivee) / Sommet.Distance(origine, arrivee);
-                System.out.println(d);
                 if (d > seuilSauvegarde){
                     graphe_copy.remove(s);
                 }
@@ -222,33 +219,18 @@ public class Main extends JFrame{
         for (int i = 0; i < g.getSize(); i++){
             Sommet s = (Sommet)(g.getValueAt(i));
             for (int j = 0; j < g.getSize(); j++){
-                Sommet s2 = (Sommet)(g.getValueAt(j));
-                double d = Sommet.Distance(s, s2);
-                if (d <= R){
-                    s.addVoisin(s2, d);
-                    s2.addVoisin(s, d);
-                    
+                Object tmp = g.getValueAt(j);
+                if (tmp != null){
+                    Sommet s2 = (Sommet)(tmp);
+                    double d = Sommet.Distance(s, s2);
+                    if (d <= R){
+                        s.addVoisin(s2, d);
+                        s2.addVoisin(s, d);
+
+                    }
                 }
             }
         }
-    }
-
-    //mode == 0: cherche le minimum
-    //mode == 1: cherche le maximum
-    public Sommet find(ArrayList<Sommet> graphe, int mode){
-        Sommet output = null;
-        double ref = mode == 0 ? INFINI : 0;
-        for (int i = 0; i <= graphe.size() -1; i++){
-            if (graphe.get(i).getDistance() < ref && mode == 0){
-                output = graphe.get(i);
-                ref = output.getDistance();
-            }
-            else if(graphe.get(i).distance > ref && mode == 1){
-                output = graphe.get(i);
-                ref = output.getDistance();
-            }
-        }
-        return output;
     }
     
     public void generateObstacles(){
@@ -301,7 +283,7 @@ public class Main extends JFrame{
                         collide = true;
                     }
                 }
-                if (mode == 2 && ref != null){    //vérification d'inclusion. A MODIFIER
+                if (mode == 2 && ref != null){    //vérification d'inclusion
                     if (Point.Distance(ref, p) > r){
                         collide = true;
                     }
