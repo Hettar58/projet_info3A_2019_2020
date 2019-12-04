@@ -18,8 +18,10 @@ public class CommandUI extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         main = Main.main;
-        PointsTF.setText(""+ main.POINTS);
-        ObstaclesTF.setText(""+ main.OBSTACLES);
+        PointsTF.setText(""+ main.nbPoints);
+        ObstaclesTF.setText(""+ main.nbObstacles);
+        R_TF.setText("" + main.R);
+        this.setSize(470, 250);
     }
 
     /**
@@ -36,12 +38,13 @@ public class CommandUI extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         PointsLabel = new javax.swing.JLabel();
         PointsTF = new javax.swing.JTextField();
+        ActivateGeneratorButton = new javax.swing.JButton();
         ObstaclesLabel = new javax.swing.JLabel();
         ObstaclesTF = new javax.swing.JTextField();
-        ActivateGeneratorButton = new javax.swing.JButton();
         ApplyDijkstraButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        R_TF = new javax.swing.JTextField();
         ResetButton = new javax.swing.JButton();
-        StatusLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         QuitButton = new javax.swing.JButton();
 
@@ -52,19 +55,13 @@ public class CommandUI extends javax.swing.JDialog {
 
         getContentPane().add(North, java.awt.BorderLayout.NORTH);
 
-        jPanel1.setLayout(new java.awt.GridLayout(4, 4));
+        jPanel1.setLayout(new java.awt.GridLayout(3, 3));
 
         PointsLabel.setText("Points");
         jPanel1.add(PointsLabel);
 
         PointsTF.setText("0");
         jPanel1.add(PointsTF);
-
-        ObstaclesLabel.setText("Obstacles");
-        jPanel1.add(ObstaclesLabel);
-
-        ObstaclesTF.setText("0");
-        jPanel1.add(ObstaclesTF);
 
         ActivateGeneratorButton.setText("Générer un graphe");
         ActivateGeneratorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -74,6 +71,12 @@ public class CommandUI extends javax.swing.JDialog {
         });
         jPanel1.add(ActivateGeneratorButton);
 
+        ObstaclesLabel.setText("Obstacles");
+        jPanel1.add(ObstaclesLabel);
+
+        ObstaclesTF.setText("0");
+        jPanel1.add(ObstaclesTF);
+
         ApplyDijkstraButton.setText("Appliquer Dijkstra");
         ApplyDijkstraButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -82,6 +85,12 @@ public class CommandUI extends javax.swing.JDialog {
         });
         jPanel1.add(ApplyDijkstraButton);
 
+        jLabel2.setText("R");
+        jPanel1.add(jLabel2);
+
+        R_TF.setText("0");
+        jPanel1.add(R_TF);
+
         ResetButton.setText("Remettre a zéro");
         ResetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -89,9 +98,6 @@ public class CommandUI extends javax.swing.JDialog {
             }
         });
         jPanel1.add(ResetButton);
-
-        StatusLabel.setText(" ");
-        jPanel1.add(StatusLabel);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -115,12 +121,14 @@ public class CommandUI extends javax.swing.JDialog {
         ActivateGeneratorButton.setEnabled(false);
         PointsTF.setEnabled(false);
         ObstaclesTF.setEnabled(false);
+        R_TF.setEnabled(false);
     }//GEN-LAST:event_ApplyDijkstraButtonActionPerformed
 
     private void ActivateGeneratorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ActivateGeneratorButtonActionPerformed
         
-        main.POINTS = Integer.parseInt(PointsTF.getText());
-        main.OBSTACLES = Integer.parseInt(ObstaclesTF.getText());
+        main.nbPoints = Integer.parseInt(PointsTF.getText());
+        main.nbObstacles = Integer.parseInt(ObstaclesTF.getText());
+        main.R = Integer.parseInt(R_TF.getText());
         main.init();
         
     }//GEN-LAST:event_ActivateGeneratorButtonActionPerformed
@@ -134,6 +142,7 @@ public class CommandUI extends javax.swing.JDialog {
         ActivateGeneratorButton.setEnabled(true);
         PointsTF.setEnabled(true);
         ObstaclesTF.setEnabled(true);
+        R_TF.setEnabled(true);
     }//GEN-LAST:event_ResetButtonActionPerformed
 
     /**
@@ -149,9 +158,10 @@ public class CommandUI extends javax.swing.JDialog {
     private javax.swing.JLabel PointsLabel;
     private javax.swing.JTextField PointsTF;
     private javax.swing.JButton QuitButton;
+    private javax.swing.JTextField R_TF;
     private javax.swing.JButton ResetButton;
-    private javax.swing.JLabel StatusLabel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables

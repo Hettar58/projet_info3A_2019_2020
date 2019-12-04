@@ -152,7 +152,12 @@ public class Heap {
     }
     
     public void refresh(){
-        //tri par selection
+        //mise a jour des points par rapport a leur distance
+        for (int i = 0; i < size; i++){
+            Sommet tmp = (Sommet)(tab[i].value);
+            tab[i].key = tmp.distance;
+        }
+        //tri par selection pour reclasser le tableau
         for (int i = 0; i < size; i++){
             int min = i;
             for (int j = i+1; j < size; j++){
@@ -203,12 +208,7 @@ public class Heap {
     }
     
     public Object getValueAt(int index){
-        if (index < size){
-            return tab[index].value;
-        }
-        else{
-            return null;
-        }
+        return tab[index].value;
     }
     
     public double getKeyAt(int index){
@@ -223,6 +223,14 @@ public class Heap {
             }
         }
         return s;
+    }
+    
+    public static void CopyHeap(Heap source, Heap destination){
+        for (int i =0; i < source.getSize(); i++ ){
+            Object obj = source.getValueAt(i);
+            double val = source.getKeyAt(i);
+            destination.addObject(obj, val);
+        }
     }
     
     private class Node{

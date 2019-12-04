@@ -17,7 +17,7 @@ public class RenderPanel extends JPanel{
     ArrayList<Obstacle> obstacles;
     ArrayList<Sommet> PCC;
     Heap graphe;
-    Heap graphe_bg;
+    ArrayList<Sommet> graphe_bg;
 
     
     public RenderPanel(){
@@ -36,9 +36,9 @@ public class RenderPanel extends JPanel{
             o.afficher(g);
         }
         
-        g.setColor(Color.orange);
-        for (int i = 0; i < graphe.getSize(); i++){
-            Sommet s = (Sommet)(graphe.getValueAt(i));
+        g.setColor(Color.ORANGE);
+        for (int i = 0; i < graphe_bg.size(); i++){
+            Sommet s = graphe_bg.get(i);
             s.pos.afficher(g);
             for (Sommet s2 : s.voisins){
                 g.drawLine(s.pos.getX(), s.pos.getY(), s2.pos.getX(), s2.pos.getY());
@@ -64,7 +64,7 @@ public class RenderPanel extends JPanel{
             g.fillOval(PCC.get(i+1).pos.getX(), PCC.get(i+1).pos.getY(), 4, 4);
         }
 
-        System.out.println("Render: " + graphe.getSize() + " pts (graphe) | " + graphe_bg.getSize() + " pts (copy) | "+ obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
+        System.out.println("Render: " + graphe.getSize() + " pts (graphe) | " + graphe_bg.size() + " pts (copy) | "+ obstacles.size() + " obstacles | "+ PCC.size() + " pts (PCC).");
     }
     
     @Override
