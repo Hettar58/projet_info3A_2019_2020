@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="dijkstra_rework:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/dijkstra_rework_jar</output-path>
+    <root id="archive" name="dijkstra_rework.jar">
+      <element id="module-output" name="dijkstra_rework" />
+    </root>
+  </artifact>
+</component>
