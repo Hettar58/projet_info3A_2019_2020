@@ -1,21 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package dijkstra;
+package dijkstra.geometry;
 
-import static dijkstra.Sommet.Distance;
+import dijkstra.datastructures.Sommet;
+import static dijkstra.datastructures.Sommet.Distance;
 import java.awt.Graphics;
 
-/**
- *
- * @author yt646712
- */
-public class Disque extends Obstacle{
+public class Disque extends Obstacle {
     Point centre;
     int rayon;
-    
+
     public Disque(Point c, int r){
         centre = c;
         rayon = r;
@@ -36,9 +28,8 @@ public class Disque extends Obstacle{
     public void setRayon(int rayon) {
         this.rayon = rayon;
     }
-    
-    
-    @Override
+
+
     public boolean collision(Sommet s){
         if (Distance(s, new Sommet(centre)) <= rayon){
             return true;
@@ -47,8 +38,7 @@ public class Disque extends Obstacle{
             return false;
         }
     }
-    
-    @Override
+
     public void afficher(Graphics g){
         g.fillOval(centre.getX() - rayon, centre.getY() - rayon, 2 * rayon, 2 * rayon);
     }
