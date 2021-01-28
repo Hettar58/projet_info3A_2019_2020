@@ -5,7 +5,7 @@ import dijkstra.datastructures.Sommet;
 import dijkstra.geometry.Disque;
 import dijkstra.geometry.Point;
 import dijkstra.geometry.Rectangle;
-import static dijkstra.Dijkstra.*;
+import static dijkstra.CONFIG.*;
 
 public class Generator {
 
@@ -16,7 +16,7 @@ public class Generator {
 
     public static void generateObstacles()
     {
-        for (int i = 0; i < Dijkstra.nbObstacles; i++)
+        for (int i = 0; i < nbObstacles; i++)
         {
             int type = (int)(2*Math.random());
 
@@ -25,7 +25,7 @@ public class Generator {
                 int r = (int)(MIN_RAYON + (MAX_RAYON - MIN_RAYON) * Math.random());
                 Point c = generatePoint(2, null);
                 Disque d = new Disque(c, r);
-                Dijkstra.obstacles.add(d);
+                obstacles.add(d);
             }
             else if (type == 1)
             {
@@ -44,67 +44,46 @@ public class Generator {
     {
         Point p_origine = new Point(5, 5);
         origine = new Sommet(p_origine);
-        origine.distance = 0;
+        origine.setDistance(0);
 
-        graphe_current.add(origine.distance, origine);
+        graphe_current.add(origine.getDistance(), origine);
 
         if (mode == 0)
         {
-            for (int i = 0; i < Dijkstra.nbPoints - 2; i++)
+            for (int i = 0; i < nbPoints - 2; i++)
             {
                 Point p = generatePoint(2, null);
                 Sommet s = new Sommet(p);
-                s.distance = INFINI;
-                graphe_current.add(s.distance, s);
+                s.setDistance(INFINI);
+                graphe_current.add(s.getDistance(), s);
             }
         }
         else if (mode == 1)
         {
-            //TODO: pas sur du code ici. a aucun moment il y a prise en compte du pcc
-            /*
-            for (int i = 0; i < graphe_old.size() - 2; i++)
-
-            {
-                Sommet s = graphe_old.get(i);
-                double d = (s.distance_origine + s.distance_arrivee) / Sommet.Distance(origine, arrivee);
-
-                if (d > seuilSauvegarde){
-                    graphe_old.remove(s);
-                }
-                else{
-                    graphe_current.add(s.distance, s);
-                    for (int j = 0; j < nbPointsIteration; j++){
-                        Point p = generatePoint(2, s.position);
-                        Sommet s2 = new Sommet(p);
-                        s2.distance = INFINI;
-                        graphe_current.add(s2.distance, s2);
-                    }
-                }
-            }
-            */
             for (int i = 0; i < PCC.size(); i++)
             {
-                graphe_current.add(PCC.get(i).distance, PCC.get(i));
+                Sommet ref = PCC.get(i);
+                //graphe_current.add(ref.distance, ref);
                 for (int j = 0; j < nbPointsIteration; j++)
                 {
-                    Point p = generatePoint(2, PCC.get(i).position);
+                    Point p = generatePoint(2, ref.position);
                     Sommet s = new Sommet(p);
-                    s.distance = INFINI;
-                    graphe_current.add(s.distance, s);
+                    s.setDistance(INFINI);
+                    graphe_current.add(s.getDistance(), s);
                 }
             }
-            System.out.println("size graphe | " + graphe_current.getSize());
+            System.out.println("size graphe = " + graphe_current.getSize());
         }
 
-        Point p_arrivee = new Point (780, 580);
-        arrivee = new Sommet(p_arrivee);
-        arrivee.distance = INFINI;
-        graphe_current.add(arrivee.distance, arrivee);
+        Point p_fin = new Point (780, 580);
+        fin = new Sommet(p_fin);
+        fin.setDistance(INFINI);
+        graphe_current.add(fin.getDistance(), fin);
     }
 
     public static void generateVoisins(Heap<Double, Sommet> g)
     {
-        System.out.println("size: " + g.getSize());
+        //System.out.println("size: " + g.getSize());
         for (int i = 0; i < g.getSize(); i++)
         {
             Sommet s = g.getValueAt(i);
@@ -132,15 +111,13 @@ public class Generator {
         {
             int x = (int)(1 + (800 - 1) * Math.random());
             int y = (int)(1 + (600 -1) * Math.random());
-            Point p = new Point(x, y);
-            return p;
+            return new Point(x, y);
         }
         else if (mode == 4)
         {
             int x = (int)(ref.getX() + MIN_DELTA+ (MAX_DELTA + 1) * Math.random());
             int y = (int)(ref.getY() + MIN_DELTA+ (MAX_DELTA + 1) * Math.random());
-            Point p = new Point(x, y);
-            return p;
+            return new Point(x, y);
         }
         else if (mode == 2 || mode == 3)
         {
@@ -155,7 +132,7 @@ public class Generator {
 
                 for (int i = 0; i < obstacles.size(); i++)
                 {
-                    if (obstacles.get(i).collision(new Sommet(p)) == true)
+                    if (obstacles.get(i).collision(new Sommet(p)))
                         collide = true;
                 }
 
@@ -164,7 +141,7 @@ public class Generator {
                     if (Point.Distance(ref, p) > r)
                         collide = true;
                 }
-            }while(collide == true);
+            }while(collide);
             return p;
         }
         return null;

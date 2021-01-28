@@ -1,46 +1,21 @@
 package dijkstra;
 
-import dijkstra.UI.CommandUI;
-import dijkstra.UI.RenderPanel;
+import static dijkstra.CONFIG.*;
 import dijkstra.datastructures.Heap;
 import dijkstra.geometry.Obstacle;
 import dijkstra.datastructures.Sommet;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
 public class Dijkstra {
     public static Dijkstra instance;
-
-    // PARAMETRES PRINCIPAUX
-    public static int nbPoints = 1500;
-    public static int nbObstacles = 0;
-    public static int R = 50;   //distance max entre 2 points
-    public static int r = 20;   //rayon max dans lequel des nouveaux points sont générés.
-    public static int nbPointsIteration = 20;       //nombre de points crées pour 1 point du PCC
-    public static double seuilSauvegarde = 1.01;    //seuil de différence pour lequel un point est contacté.
-
-    public static final int INFINI = 9999;
-
-    public static ArrayList<Obstacle> obstacles;
-    public static Heap<Double, Sommet> graphe_current;
-    public static ArrayList<Sommet> graphe_old;
-    public static ArrayList<Sommet> PCC;
-
-    public static Sommet origine;
-    public static Sommet arrivee;
     int compteurIteration;
-
-
-    RenderPanel UI;
-    CommandUI commandes;
 
     public Dijkstra()
     {
         instance = this;
         this.compteurIteration = 0;
-        graphe_current = new Heap(nbPoints);
+        graphe_current = new Heap<Double, Sommet>(nbPoints);
         PCC = new ArrayList<Sommet>();
         obstacles = new ArrayList<Obstacle>();
         graphe_old = new ArrayList<Sommet>();
@@ -50,8 +25,11 @@ public class Dijkstra {
     {
         System.out.println();
         handleIterations();
-        PCC = dijkstra(origine, arrivee, graphe_current, graphe_old);
-        System.out.println("Applied Dijkstra on " + graphe_old.size() + " points | PCC size: "+ PCC.size() + " | remaining : " + graphe_current.getSize());
+
+        long beginTime = System.currentTimeMillis();
+        PCC = dijkstra(origine, fin, graphe_current, graphe_old);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Dijkstra:" + graphe_old.size() + " points | PCC size: "+ PCC.size() + " | remaining : " + graphe_current.getSize() + " | " + (endTime - beginTime) + " ms");
         Main.rw.repaint();
         compteurIteration++;
     }
@@ -60,35 +38,22 @@ public class Dijkstra {
     {
         ArrayList<Sommet> out = new ArrayList<Sommet>();
 
-        Sommet tmp = debut;
+        Sommet tmp;
         do {
-            //System.out.println("--- GRAPHE ---");
-            //System.out.println(graphe_current.toString());
-            //System.out.println("--- FIN GRAPHE ---");
-
             tmp = graphe_current.getRootValue();
-            //System.out.println();
             if (tmp != null)
             {
-                //System.out.println(tmp.getNombreVoisins());
-                Iterator it = tmp.getVoisins().entrySet().iterator();
-                while(it.hasNext())
-                {
-                    Map.Entry<Sommet, Double> voisin = (Map.Entry)it.next();
-                    Sommet s = voisin.getKey();
-                    double distance = voisin.getValue();
+                for (int i = 0; i < tmp.getNombreVoisins(); i++) {
+                    Sommet s = tmp.getSommetVoisin(i);
+                    double arc = tmp.getArcVoisin(i);
+                    double distance_tmp = tmp.getDistance();
 
-                    if (s.distance > tmp.distance + distance)
-                    {
-                        s.distance = tmp.distance + distance;
-                        s.previous = tmp;
-                        graphe_current.updateKeyFromValue(s, s.distance);
+                    if (s.getDistance() > distance_tmp + arc) {
+                        s.setDistance(distance_tmp + arc);
+                        s.setPrevious(tmp);
+                        graphe_current.updateKeyFromValue(s, s.getDistance());
                     }
                 }
-
-                //pas sûr de l'utilité.
-                tmp.distance_origine = Sommet.Distance(origine, tmp);
-                tmp.distance_arrivee = Sommet.Distance(arrivee, tmp);
 
                 graphe_old.add(tmp);
                 graphe_current.removeRoot();
@@ -99,7 +64,7 @@ public class Dijkstra {
         while(tmp != null)
         {
             out.add(tmp);
-            tmp = tmp.previous;
+            tmp = tmp.getPrevious();
         }
 
         return out;
@@ -109,15 +74,9 @@ public class Dijkstra {
     {
         if (compteurIteration != 0)
         {
-            switch (compteurIteration)
-            {
-                case 1: seuilSauvegarde = 1.01; break;
-                case 2: seuilSauvegarde = 1.001; break;
-                case 3: seuilSauvegarde = 1.0001; break;
-                case 4: seuilSauvegarde = 1.0; break;
-            }
-            R = R - (R/10);
-            r = r - (r / 10);
+            R = R - (R / 8);
+            r = r - (r / 8);
+            System.out.println("dMax search (R) = " + R + " | dMax generator (r) = " + r);
             graphe_current.clear();
             Generator.generateGraphe(1);
             graphe_old.clear();     //on le clear après car nécessaire pour la génération du nouveau graphe.
@@ -129,7 +88,6 @@ public class Dijkstra {
     {
         compteurIteration = 0;
         R = 75;
-        //seuilSauvegarde = 1.01;
 
         graphe_current.clear();
         graphe_old.clear();

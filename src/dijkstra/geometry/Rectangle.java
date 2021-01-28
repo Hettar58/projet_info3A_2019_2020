@@ -6,8 +6,8 @@ import java.awt.*;
 
 public class Rectangle extends Obstacle {
 
-    private Point ext1;
-    private Point ext2;
+    private final Point ext1;
+    private final Point ext2;
 
     public Rectangle(Point HG, Point BD){
         this.ext1 = HG;
@@ -16,10 +16,10 @@ public class Rectangle extends Obstacle {
 
     @Override
     public boolean collision(Sommet s){
-        return( ext1.getX() < s.position.getX()
-                && ext2.getX() > s.position.getX()
-                && ext1.getY() < s.position.getY()
-                && ext2.getY() > s.position.getY()
+        return( ext1.getX() <= s.position.getX()
+                && ext2.getX() >= s.position.getX()
+                && ext1.getY() <= s.position.getY()
+                && ext2.getY() >= s.position.getY()
                 );
     }
 

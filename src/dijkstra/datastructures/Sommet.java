@@ -7,13 +7,10 @@ import java.util.HashMap;
 public class Sommet {
     public Point position;
 
-    public HashMap<Sommet, Double> voisins;
+    private HashMap<Sommet, Double> voisins;
 
-    public Sommet previous;
-
-    public double distance;
-    public double distance_origine;
-    public double distance_arrivee;
+    private Sommet previous;
+    private double distance;
 
     public Sommet(Point p)
     {
@@ -21,24 +18,9 @@ public class Sommet {
         voisins = new HashMap<Sommet, Double>();
     }
 
-    public Sommet(Sommet s)
-    {
-        this.position = s.position;
-        this.voisins = s.voisins;
-        this.previous = s.previous;
-        this.distance = s.distance;
-        this.distance_origine = s.distance_origine;
-        this.distance_arrivee = s.distance_arrivee;
-    }
-
     public void addVoisin(Sommet s, double d)
     {
         voisins.put(s, d);
-    }
-
-    public void deleteVoisin(Sommet s)
-    {
-        voisins.remove(s);
     }
 
     public Sommet getSommetVoisin(int index)
@@ -53,11 +35,16 @@ public class Sommet {
 
     public int getNombreVoisins() { return voisins.size();}
 
-    public HashMap<Sommet, Double> getVoisins() { return this.voisins;}
-
     public static double Distance(Sommet s1, Sommet s2){
         return Math.sqrt(Math.pow(s2.position.getX() - s1.position.getX(), 2) + Math.pow(s2.position.getY() - s1.position.getY(), 2));
     }
+
+    public void setPrevious(Sommet s)
+    {
+        this.previous = s;
+    }
+
+    public Sommet getPrevious(){ return previous;}
 
     public double getDistance() {
         return distance;

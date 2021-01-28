@@ -2,65 +2,55 @@ package dijkstra.UI;
 
 import dijkstra.Dijkstra;
 import dijkstra.Main;
+import static dijkstra.CONFIG.*;
 import javax.swing.*;
 
 public class CommandUI extends JDialog {
     Dijkstra dijkstra;
-    Main main;
 
     private javax.swing.JButton ActivateGeneratorButton;
-    private javax.swing.JButton ApplyDijkstraButton;
-    private javax.swing.JPanel North;
-    private javax.swing.JLabel ObstaclesLabel;
     private javax.swing.JTextField ObstaclesTF;
-    private javax.swing.JLabel PointsLabel;
     private javax.swing.JTextField PointsTF;
-    private javax.swing.JButton QuitButton;
     private javax.swing.JTextField R_TF;
-    private javax.swing.JButton ResetButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
 
     public CommandUI(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         dijkstra = Dijkstra.instance;
-        PointsTF.setText(""+ dijkstra.nbPoints);
-        ObstaclesTF.setText(""+ dijkstra.nbObstacles);
-        R_TF.setText("" + dijkstra.R);
+        PointsTF.setText(""+ nbPoints);
+        ObstaclesTF.setText(""+ nbObstacles);
+        R_TF.setText("" + R);
         this.setSize(470, 250);
     }
 
     private void initComponents() {
 
-        North = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        PointsLabel = new javax.swing.JLabel();
+        JPanel north = new JPanel();
+        JLabel jLabel1 = new JLabel();
+        JPanel jPanel1 = new JPanel();
+        JLabel pointsLabel = new JLabel();
         PointsTF = new javax.swing.JTextField();
         ActivateGeneratorButton = new javax.swing.JButton();
-        ObstaclesLabel = new javax.swing.JLabel();
+        JLabel obstaclesLabel = new JLabel();
         ObstaclesTF = new javax.swing.JTextField();
-        ApplyDijkstraButton = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
+        JButton applyDijkstraButton = new JButton();
+        JLabel jLabel2 = new JLabel();
         R_TF = new javax.swing.JTextField();
-        ResetButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        QuitButton = new javax.swing.JButton();
+        JButton resetButton = new JButton();
+        JPanel jPanel2 = new JPanel();
+        JButton quitButton = new JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setText("Commandes dijkstra");
-        North.add(jLabel1);
+        north.add(jLabel1);
 
-        getContentPane().add(North, java.awt.BorderLayout.NORTH);
+        getContentPane().add(north, java.awt.BorderLayout.NORTH);
 
         jPanel1.setLayout(new java.awt.GridLayout(3, 3));
 
-        PointsLabel.setText("Points");
-        jPanel1.add(PointsLabel);
+        pointsLabel.setText("Points");
+        jPanel1.add(pointsLabel);
 
         PointsTF.setText("0");
         jPanel1.add(PointsTF);
@@ -73,19 +63,19 @@ public class CommandUI extends JDialog {
         });
         jPanel1.add(ActivateGeneratorButton);
 
-        ObstaclesLabel.setText("Obstacles");
-        jPanel1.add(ObstaclesLabel);
+        obstaclesLabel.setText("Obstacles");
+        jPanel1.add(obstaclesLabel);
 
         ObstaclesTF.setText("0");
         jPanel1.add(ObstaclesTF);
 
-        ApplyDijkstraButton.setText("Appliquer Dijkstra");
-        ApplyDijkstraButton.addActionListener(new java.awt.event.ActionListener() {
+        applyDijkstraButton.setText("Appliquer Dijkstra");
+        applyDijkstraButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ApplyDijkstraButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(ApplyDijkstraButton);
+        jPanel1.add(applyDijkstraButton);
 
         jLabel2.setText("R");
         jPanel1.add(jLabel2);
@@ -93,25 +83,25 @@ public class CommandUI extends JDialog {
         R_TF.setText("0");
         jPanel1.add(R_TF);
 
-        ResetButton.setText("Remettre a zéro");
-        ResetButton.addActionListener(new java.awt.event.ActionListener() {
+        resetButton.setText("Remettre a zéro");
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ResetButtonActionPerformed(evt);
             }
         });
-        jPanel1.add(ResetButton);
+        jPanel1.add(resetButton);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 0));
 
-        QuitButton.setText("Quitter");
-        QuitButton.addActionListener(new java.awt.event.ActionListener() {
+        quitButton.setText("Quitter");
+        quitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 QuitButtonActionPerformed(evt);
             }
         });
-        jPanel2.add(QuitButton);
+        jPanel2.add(quitButton);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
 
@@ -128,9 +118,9 @@ public class CommandUI extends JDialog {
     }
 
     private void ActivateGeneratorButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        dijkstra.nbPoints = Integer.parseInt(PointsTF.getText());
-        dijkstra.nbObstacles = Integer.parseInt(ObstaclesTF.getText());
-        dijkstra.R = Integer.parseInt(R_TF.getText());
+        nbPoints = Integer.parseInt(PointsTF.getText());
+        nbObstacles = Integer.parseInt(ObstaclesTF.getText());
+        R = Integer.parseInt(R_TF.getText());
         dijkstra.init();
     }
 
